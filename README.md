@@ -1,0 +1,2 @@
+# szakdolgozat
+Szakdoga repo
