@@ -2,7 +2,11 @@ https://graphics.stanford.edu/courses/cs248-02/History-of-graphics/History-of-gr
 
 http://www.cs.cmu.edu/~ph/nyit/masson/cgibookinfo.htm
 
+
 http://www.cs.cmu.edu/~ph/nyit/masson/history.htm
+
 http://www.infonia.hu/digitalis_folyoirat/2009_1/2009_1_z_karvalics_laszlo.pdf
 
+
 https://design.osu.edu/carlson/history/timeline.html
+http://deseng.ryerson.ca/dokuwiki/mec222:brief_history_of_computer_graphics
