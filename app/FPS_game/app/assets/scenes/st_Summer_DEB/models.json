@@ -1,0 +1,42 @@
+{
+  "scene_models": [
+    {
+      "model_name": "lakotomb",
+      "model_src": "/models/lakotomb.dae",
+      "transform": [[1,0,0,0],
+                    [0,1,0,0.2],
+                    [0,0,1,0],
+                    [0,0,0,1]],
+      "generator": {
+        "function": "housing",
+        "parameters": [5,5,1]
+      },
+	  "replacements": {
+		
+	  }
+    },
+	{
+      "model_name": "lakotomb2",
+      "model_src": "/models/lakotomb.dae",
+      "transform": [[-1,0,0,1],
+                    [0,1,0,0.2],
+                    [0,0,-1,0],
+                    [0,0,0,1]],
+      "generator": {
+        "function": "housing",
+        "parameters": [3,5,1]
+      },
+	  "replacements": {
+		
+	  }
+    },
+    {
+      "model_name": "egbolt",
+      "model_src": "/models/scene.dae"
+    },
+    {
+      "model_name": "character",
+      "model_src": "/models/Security.dae"
+    }
+  ]
+}

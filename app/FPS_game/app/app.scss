@@ -1,0 +1,33 @@
+
+@import "scss/_common";
+body {
+  margin:0;
+  padding:0;
+  .app_canvas {
+  display: block;
+  @include stretch(0px,0px,0px,0px);
+  [ui-view] {
+    display: block;
+    @include stretch(0px,0px,0px,0px);
+    .renderer {
+      display: block;
+      @include stretch(0px,0px,0px,0px);
+      .loader{
+        display: block;
+        position: absolute;
+        width:400px;
+        height: 200px;
+        background: rgba(255,255,255,0.3);
+        color:#e38d13;
+        font-size: 20px;
+        font-family: Verdana;
+        top:50%;
+        left:50%;
+        margin-top: -100px;
+        margin-left: -200px;
+      }
+    }
+
+  }
+  }
+}
