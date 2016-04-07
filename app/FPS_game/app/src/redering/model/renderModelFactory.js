@@ -5,7 +5,7 @@ angular.module('fps_game.rendering')
             var self = this;
             var camControls = null;
             var lightControls = null;
-			var clock = new THREE.Clock();
+			self.clock = new THREE.Clock();
 
             self.scene = null;
             self.renderer = null;
@@ -83,12 +83,7 @@ angular.module('fps_game.rendering')
 
                 loader.load(modelUrl, function (collada) {
                     var dae = collada.scene;
-
                     dae.traverse( function( child ) {
-						if ( child instanceof THREE.SkinnedMesh ) {
-							var animation = new THREE.Animation( child, child.geometry.animation );
-							animation.play();
-						}
                         if( child instanceof THREE.Mesh ) {
                             child.material.bumpScale = 0.002;
                             child.receiveShadow = true;
@@ -117,6 +112,7 @@ angular.module('fps_game.rendering')
                 self.baseLight.updateMatrixWorld();
 				
 				THREE.AnimationHandler.update( clock.getDelta() );
+				TWEEN.update();
                 //self.baseLight.target = self.baseCamera.target;
             };
 

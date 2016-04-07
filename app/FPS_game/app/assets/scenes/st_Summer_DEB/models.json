@@ -3,32 +3,21 @@
     {
       "model_name": "lakotomb",
       "model_src": "/models/lakotomb.dae",
-      "transform": [[1,0,0,0],
-                    [0,1,0,0.2],
-                    [0,0,1,0],
-                    [0,0,0,1]],
-      "generator": {
-        "function": "housing",
-        "parameters": [5,5,1]
-      },
-	  "replacements": {
+      "generators": [
+		{
+			"function": "housing",
+			"parameters": [5,5,1]
+		},
+		{
+			"function": "housing",
+			"parameters": [3,5,1],
+			"postTransform": [[0,0,-1, 0],
+							  [0,1, 0, 0],
+                              [1,0, 0,70],
+                              [0,0, 0, 1]]
+		}
 		
-	  }
-    },
-	{
-      "model_name": "lakotomb2",
-      "model_src": "/models/lakotomb.dae",
-      "transform": [[-1,0,0,1],
-                    [0,1,0,0.2],
-                    [0,0,-1,0],
-                    [0,0,0,1]],
-      "generator": {
-        "function": "housing",
-        "parameters": [3,5,1]
-      },
-	  "replacements": {
-		
-	  }
+	  ]
     },
     {
       "model_name": "egbolt",

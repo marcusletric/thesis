@@ -4,7 +4,8 @@ angular.module('fps_game', [
   'ui.router',
   'fps_game.rendering',
   'fps_game.loaders',
-  'fps_game.generators'
+  'fps_game.generators',
+  'fps_game.player'
 ]).
 config(['$stateProvider', function($stateProvider) {
         $stateProvider.state('home', {
