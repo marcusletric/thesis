@@ -7,7 +7,7 @@ var gameSetupCtrl = function ($scope, resourceFetcher, sceneLoader, Player, $tim
         });
 		$timeout(function(){
 			$scope.renderer.loadModel(resRoot + '/meshes/player.dae').then(function(playerMesh){
-				$scope.player = new Player(playerMesh,$scope.renderer.baseCamera);
+				$scope.player = new Player(playerMesh,$scope.renderer);
 				$scope.renderer.addObject($scope.player.model);
 				$scope.renderer.addObject($scope.player.lookTarget);
 				$scope.renderer.addFrameUpdatedObject($scope.player);
