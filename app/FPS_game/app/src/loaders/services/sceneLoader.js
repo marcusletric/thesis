@@ -7,9 +7,8 @@ var sceneLoader = function ($http,$q, housingGenerator) {
 	var texturesLoaded = false;
 	
 	var imageloader = new THREE.ImageLoader();
-	
 	imageloader.manager.onStart = function(){
-		textureLoading++;
+			textureLoading++;
 	}
 	
 	imageloader.manager.onLoad = function(){
@@ -22,6 +21,7 @@ var sceneLoader = function ($http,$q, housingGenerator) {
     };
 
     this.loadScene = function(scope,scenePath){
+		
         scope.loading = true;
 		renderScope = scope;
 		modelsLoaded = false;

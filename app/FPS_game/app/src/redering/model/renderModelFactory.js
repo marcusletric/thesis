@@ -1,5 +1,5 @@
 angular.module('fps_game.rendering')
-    .factory("renderModelFactory", function($q){
+    .factory("renderModelFactory", function($q,$window){
 
         return function(config) {
             var self = this;
@@ -15,6 +15,7 @@ angular.module('fps_game.rendering')
             self.ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
             self.actualCamera = null;
             self.sceneElements = [];
+			self.updateOnFrame = [];
             self.config = config;
 
 
@@ -57,15 +58,16 @@ angular.module('fps_game.rendering')
                 self.baseLight.shadowMapDarkness = 0.1;
                 self.baseLight.shadowMapWidth = 1024;
                 self.baseLight.shadowMapHeight = 1024;*/
-			
-
-                camControls = new THREE.OrbitControls(self.baseCamera, self.renderer.domElement);
 
                 self.addObject(self.baseCamera);
                 self.addObject(self.baseLight);
                 
 
             }
+			
+			self.addFrameUpdatedObject = function(object){
+				self.updateOnFrame.push(object);
+			};
 
             self.addObject = function (object) {
                 sceneElements.push(object);
@@ -97,7 +99,7 @@ angular.module('fps_game.rendering')
 
             self.render = function () {
                 requestAnimationFrame(self.render);
-                camControls.update();
+				var deltaTime = clock.getDelta();
 
                 for(coord in self.baseLight.position){
                     self.baseLight.position[coord] = self.baseCamera.position[coord]-1;
@@ -111,10 +113,20 @@ angular.module('fps_game.rendering')
                 self.baseLight.updateMatrix();
                 self.baseLight.updateMatrixWorld();
 				
-				THREE.AnimationHandler.update( clock.getDelta() );
-				TWEEN.update();
+				THREE.AnimationHandler.update(deltaTime);
+				
+				self.updateOnFrame.forEach(function(object){
+					object.update(deltaTime);
+				});
+				
                 //self.baseLight.target = self.baseCamera.target;
             };
+
+            $($window).on('resize',function(){
+                self.renderer.setSize(self.config.element.width(),self.config.element.height());
+                self.baseCamera.aspect = self.config.element.width()/self.config.element.height();
+                self.baseCamera.updateProjectionMatrix();
+            });
 
             init();
             return self;

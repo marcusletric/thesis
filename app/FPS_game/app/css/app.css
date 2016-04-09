@@ -15,7 +15,12 @@
 
 body {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  width: 100%;
+  display: block;
+  height: 100%;
+  position: absolute;
+  overflow: hidden; }
   body .app_canvas {
     display: block;
     position: absolute;
