@@ -474,15 +474,6 @@
       </skin>
     </controller>
   </library_controllers>
-  <library_lights>
-    <light id="EnvironmentAmbientLight" name="EnvironmentAmbientLight">
-      <technique_common>
-        <ambient>
-          <color>0 0 0</color>
-        </ambient>
-      </technique_common>
-    </light>
-  </library_lights>
   <library_images>
     <image id="Eye_Brown1_jpg">
       <init_from>./images/2_Eye_Brown1.jpg</init_from>

@@ -1,9 +1,10 @@
-var playerFactory = function (){
+angular.module('fps_game.player').factory('Player', function (webSocket){
 	return function (model,renderer) {
 		var self = this;
 		
 		var movementSpeed = 3.2;
 
+		var playerID = null;
 		self.mouseSensitivity = 0.8;
 		self.model = model;
 		self.renderer = renderer;
@@ -18,9 +19,6 @@ var playerFactory = function (){
 		};
 
 		self.movementVector = null;
-
-		self.collisionRays = [];
-		self.downRay = null;
 
 		var boxhelper = new THREE.BoundingBoxHelper( self.model, 0xff0000 );
 		boxhelper.update();
@@ -46,23 +44,31 @@ var playerFactory = function (){
 		};
 
 		self.update = function(deltaTime){
-			self.downRay = new THREE.Ray(self.model.position, new THREE.Vector3(self.model.position.x,-1,self.model.position.z).normalize());
 			self.model.applyMatrix(calculateNextMatrix(deltaTime));
 
 			self.model.rotation.set(0,self.lookAngles.y,0);
 			self.model.updateMatrix();
-			self.camera.position.set(self.model.position.x,self.boundBox.max.y,self.model.position.z);
+			self.camera.position.set(self.model.position.x,self.model.position.y + self.boundBox.max.y,self.model.position.z);
 			self.lookTarget.position.set(
 				self.model.position.x + -(Math.sin(self.lookAngles.y)),
-				self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x)),
+				self.model.position.y + self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x)),
 				self.model.position.z + -(Math.cos(self.lookAngles.y))
 			);
 			self.camera.lookAt(self.lookTarget.position);
+			webSocket.playerUpdate(self.getNetworkPlayer());
 		};
 
 		self.updateLook = function(delta){
 			self.lookAngles.x = delta.y * (Math.PI / 2);
 			self.lookAngles.y = delta.x * Math.PI;
+		};
+
+		self.getNetworkPlayer = function(){
+			return {
+				'id' : self.getID(),
+				'position' : self.model.position,
+				'rotation' : self.model.rotation
+			}
 		};
 
 		function init(){
@@ -91,16 +97,38 @@ var playerFactory = function (){
 			self.movementVector.applyAxisAngle(new THREE.Vector3(0,1,0).normalize(), self.lookAngles.y);
 
 			var collisionRay = new THREE.Ray(new THREE.Vector3(self.model.position.x,self.boundBox.max.y/4,self.model.position.z),self.movementVector.clone().normalize());
+			var downRay = new THREE.Ray(new THREE.Vector3(self.model.position.x,self.model.position.y + self.boundBox.max.y/4,self.model.position.z),new THREE.Vector3(0,-1,0).normalize());
 			var raycaster = new THREE.Raycaster();
 
 			raycaster.ray = collisionRay;
 
-			var closest = raycaster.intersectObjects( self.renderer.scene.children,true)[0];
+			var nearObjects = [];
 
-			console.log(raycaster.intersectObjects( self.renderer.scene.children ));
+			self.renderer.scene.children.forEach(function(child){
+				if(self.model.position.distanceTo(child.position) <= child.nearRadius){
+					nearObjects.push(child);
+				}
+			});
 
-			if( closest && closest.distance <= self.boundBox.max.x ){
+			var closest = raycaster.intersectObjects( nearObjects, true )[0];
+
+			if( closest && closest.distance <= self.boundBox.max.x + 0.5 ){
 				self.movementVector.setLength(0);
+			}
+
+			raycaster.ray = downRay;
+
+			closest = raycaster.intersectObjects( nearObjects, true )[0];
+
+			if( closest && closest.distance < self.boundBox.max.y/4 - self.model.position.y ){
+				self.movementVector.setY(self.boundBox.max.y/4 - closest.distance);
+			} else if(closest) {
+				self.movementVector.setY(0);
+			} else if(self.model.position.y > 0) {
+				self.renderer.removeObject(closest);
+				self.movementVector.setY(-self.model.position.y);
+			} else {
+				self.movementVector.setY(0);
 			}
 			
 			var transMatrix = new THREE.Matrix4();
@@ -108,7 +136,13 @@ var playerFactory = function (){
 			return transMatrix;
 		}
 
-	};
-};
+		this.setID = function(id){
+			playerID = id;
+		};
 
-angular.module('fps_game.player').factory('Player', ['$http', '$q', playerFactory]);
+		this.getID = function(){
+			return playerID;
+		};
+
+	};
+});

@@ -3,6 +3,7 @@ angular.module('fps_game.player').directive('keyboardControl', function () {
       restrict: 'A',
       link: function(scope){
 		  $('body').on('keydown',function(event){
+			  if(scope.loading){return;}
 			  switch(String.fromCharCode(event.which)){
 				  case 'w' :
 				  case 'W' : scope.player.movementFlags.F=1; break;
@@ -16,6 +17,7 @@ angular.module('fps_game.player').directive('keyboardControl', function () {
 		  });
 		  
 		  $('body').on('keyup',function(){
+			  if(scope.loading){return;}
 			  switch(String.fromCharCode(event.which)){
 				  case 'w' :
 				  case 'W' : scope.player.movementFlags.F=0; break;

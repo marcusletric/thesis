@@ -1,8 +1,8 @@
 {
   "name": "fps_game",
   "private": true,
-  "version": "0.0.0",
-  "description": "First person shooter game",
+  "version": "0.0",
+  "description": "First person shooter game - thesis demo app",
   "devDependencies": {
 
   },
@@ -29,6 +29,7 @@
     "wiredep": "^2.2.2",
     "bower": "*",
     "http" : "*",
+    "nodejs-websocket" : "*",
     "url" : "*",
     "path" : "*",
     "fs" : "*",

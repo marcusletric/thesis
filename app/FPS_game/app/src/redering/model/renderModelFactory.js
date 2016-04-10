@@ -3,8 +3,7 @@ angular.module('fps_game.rendering')
 
         return function(config) {
             var self = this;
-            var camControls = null;
-            var lightControls = null;
+
 			self.clock = new THREE.Clock();
 
             self.scene = null;
@@ -17,7 +16,6 @@ angular.module('fps_game.rendering')
             self.sceneElements = [];
 			self.updateOnFrame = [];
             self.config = config;
-
 
             function construct(constructor, args) {
                 function F() {
@@ -40,6 +38,8 @@ angular.module('fps_game.rendering')
                 self.renderer = new THREE.WebGLRenderer();
                 self.baseCamera = construct(THREE.PerspectiveCamera, getConfigParam('camera'));
                 self.actualCamera = self.baseCamera;
+
+                self.actualCamera.position.set(0,100,0);
 
                 /*self.baseLight.castShadow = true;
                 self.baseLight.shadowDarkness = 0.6;

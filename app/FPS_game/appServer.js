@@ -1,21 +1,14 @@
 var http = require('http'),
     url = require("url"),
     path = require("path"),
-    fs = require("fs"),
-    qs = require('querystring');
-//Lets define a port we want to listen to
-const PORT=8080;
+    fs = require("fs");
+const PORT = 8080;
 
-//We need a function which handles requests and send response
-
-//Create a server
-
-//connect();
+require('./gameServer.js');
 
 var server = http.createServer(handleRequest);
 
 server.listen(PORT, function(){
-    //Callback triggered when server is successfully listening. Hurray!
     console.log("Server listening on: http://localhost:%s", PORT);
 });
 
@@ -24,27 +17,7 @@ function commandSent(){
 }
 
 function handleRequest(request, response){
-
-    if (request.method == 'POST') {
-        var body = '';
-
-        request.on('data', function (data) {
-            body += data;
-
-            // Too much POST data, kill the connection!
-            // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
-            if (body.length > 1e6)
-                request.connection.destroy();
-        });
-
-        request.on('end', function () {
-
-            var post = qs.parse(body);
-
-        });
-
-        response.end();
-    } else if (request.method == 'GET') {
+    if (request.method == 'GET') {
         var uri = url.parse(request.url).pathname
             , filename = path.join(process.cwd() + "/app/", uri);
 

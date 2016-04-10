@@ -6,7 +6,7 @@ angular.module('fps_game.player').directive('mouseControl', function ($window) {
             var middle = {x:canvas.width/2,y:canvas.height/2};
             var currentPos = angular.extend({},middle);
             $($window).on('mousemove',function(event){
-                if(scope.pointerLock){
+                if(scope.pointerLock && ! scope.loading){
                     currentPos.x += event.originalEvent.movementX;
                     if(event.originalEvent.movementY > 0 && currentPos.y < canvas.height ||
                         event.originalEvent.movementY < 0 && currentPos.y > 0 ){
