@@ -1,31 +1,34 @@
-var sceneLoader = function ($http,$q, housingGenerator) {
+angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, housingGenerator,helper3D) {
 
     var self = this;
     var renderScope = null;
 	var textureLoading = 0;
 	var modelsLoaded = false;
 	var texturesLoaded = false;
+	var loadDeferred = null;
 	
 	var imageloader = new THREE.ImageLoader();
-	
 	imageloader.manager.onStart = function(){
-		textureLoading++;
-	}
+			textureLoading++;
+	};
 	
 	imageloader.manager.onLoad = function(){
 		textureLoading--;
 		textureLoaded();
-	}
+	};
 
     this.generators = {
         "housing" : housingGenerator
     };
 
     this.loadScene = function(scope,scenePath){
+		loadDeferred = $q.defer();
         scope.loading = true;
+
 		renderScope = scope;
 		modelsLoaded = false;
 		texturesLoaded = false;
+
         $http.get(scenePath + '/models.json').then(function(response){
             var sceneModels = response.data.scene_models;
             var loadedModels = [];
@@ -38,7 +41,7 @@ var sceneLoader = function ($http,$q, housingGenerator) {
                 loadedModels.forEach(function(loadedModel, index){
                     loadedModel.meta = sceneModels[index];
 					if(loadedModel.meta.transform){
-						applyTransformationMatrix(loadedModel,loadedModel.meta.transform);
+						helper3D.applyTransformationMatrix(loadedModel,loadedModel.meta.transform);
 					}
 
                     if(loadedModel.meta.generators){
@@ -50,13 +53,15 @@ var sceneLoader = function ($http,$q, housingGenerator) {
 							newModel = generatorInstance.generate.apply(this,[modelClone].concat(generator.parameters));
 							
 							if(generator.postTransform){
-								applyTransformationMatrix(newModel,generator.postTransform);
+								helper3D.applyTransformationMatrix(newModel,generator.postTransform);
 							}
-							
+
+							appendNearRadius(newModel);
 							readyModels.push(newModel)
 						});
                     } else {
                         newModel = loadedModel;
+						appendNearRadius(newModel);
 						readyModels.push(newModel)
                     }
 					
@@ -65,13 +70,12 @@ var sceneLoader = function ($http,$q, housingGenerator) {
 							newModel
 						});
                     }*/
-					
-					
-					
                 });
 				handleLoad(readyModels);
             });
         });
+
+		return loadDeferred.promise;
     };
 	
 	function textureLoaded(){
@@ -79,7 +83,22 @@ var sceneLoader = function ($http,$q, housingGenerator) {
 			handleLoad();
 		}
 	}
-	
+
+	function appendNearRadius(object) {
+		var boxHelper = new THREE.BoundingBoxHelper( object, 0xff0000 );
+		boxHelper.update();
+		var largest = 0;
+		for(var edge in boxHelper.box){
+			for(var axis in boxHelper.box[edge]) {
+				var radius = Math.abs(boxHelper.box[edge][axis]) - Math.abs(object.position[axis]);
+				if (radius > largest) {
+					largest = radius;
+				}
+			}
+		}
+		object.nearRadius = largest + 1;
+	}
+
 	function handleLoad(loadedModels){
 		if(!angular.isUndefined(loadedModels)){
 			modelsLoaded = loadedModels;
@@ -91,25 +110,8 @@ var sceneLoader = function ($http,$q, housingGenerator) {
 			modelsLoaded.forEach(function(model){
 				renderScope.renderer.addObject(model);
 			});
+			renderScope.loading = false;
+			loadDeferred.resolve(true);
 		}
-		renderScope.loading = false;
 	}
-	
-	function applyTransformationMatrix(model,tr){
-		model.updateMatrix();
-		var transMatrix = new THREE.Matrix4();
-		var currentMatrix = model.matrix;
-		transMatrix.set(
-			tr[0][0],tr[0][1],tr[0][2],tr[0][3],
-			tr[1][0],tr[1][1],tr[1][2],tr[1][3],
-			tr[2][0],tr[2][1],tr[2][2],tr[2][3],
-			tr[3][0],tr[3][1],tr[3][2],tr[3][3]
-		);
-		// TODO: fix!
-		//transMatrix.multiply(currentMatrix);
-		model.applyMatrix(transMatrix);
-	}
-
-};
-
-angular.module('fps_game.loaders').service('sceneLoader', ['$http','$q', 'housingGenerator', sceneLoader]);
+});

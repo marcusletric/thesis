@@ -1,15 +1,13 @@
 {
-  "name": "angular-seed",
-  "description": "A starter project for AngularJS",
-  "version": "0.0.0",
-  "homepage": "https://github.com/angular/angular-seed",
-  "license": "MIT",
+  "name": "FPS game",
+  "description": "Web application for thesis demonstration purpose",
+  "version": "0.9",
+  "homepage": "",
+  "license": "",
   "private": true,
   "dependencies": {
     "jquery": "2.1.3",
-    "angular": "1.4.x",
-    "angular-bootstrap": "*",
-    "bootstrap": "*",
+    "angular": "1.5.3",
     "angular-ui-router": "0.2.15"
   }
 }

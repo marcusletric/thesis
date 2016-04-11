@@ -55,10 +55,6 @@
     {
       "model_name": "egbolt",
       "model_src": "/models/scene.dae"
-    },
-    {
-      "model_name": "character",
-      "model_src": "/models/Security.dae"
     }
   ]
 }

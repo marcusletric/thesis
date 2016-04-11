@@ -3,22 +3,21 @@ var renderCtrl = function ($scope, $element, renderModelFactory) {
     var elem = $($element);
     var config = {
         'camera':{
-            'fov':80,
+            'fov':90,
             'aspect':elem.width()/elem.height(),
-            'near':0.001,
+            'near':0.01,
             'far':1000
         },
         'dimensions':{
             'width':elem.width(),
             'height':elem.height()
-        }
+        },
+        'element': elem
     };
 
-    var init = function () {
-        var renderModel = renderModelFactory(config);
+    var renderModel = renderModelFactory(config);
 
-        renderModel.baseCamera.position.z=10;
-        renderModel.baseCamera.lookAt(new THREE.Vector3(0,0,0));
+    var init = function () {
 
         elem.append(renderModel.renderer.domElement);
         renderModel.renderer.setSize(config.dimensions.width,config.dimensions.height);

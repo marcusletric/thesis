@@ -1,8 +1,13 @@
 
 @import "scss/_common";
 body {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: block;
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
   .app_canvas {
   display: block;
   @include stretch(0px,0px,0px,0px);
@@ -25,6 +30,8 @@ body {
         left:50%;
         margin-top: -100px;
         margin-left: -200px;
+        text-align: center;
+        vertical-align: middle;
       }
     }
 
