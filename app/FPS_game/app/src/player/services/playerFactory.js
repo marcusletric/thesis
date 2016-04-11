@@ -120,8 +120,16 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 			self.movementVector.setLength(distance);
 			self.movementVector.applyAxisAngle(new THREE.Vector3(0,1,0).normalize(), self.lookAngles.y);
 
-			var collisionRay = new THREE.Ray(new THREE.Vector3(self.model.position.x,self.boundBox.max.y/4,self.model.position.z),self.movementVector.clone().normalize());
-			var downRay = new THREE.Ray(new THREE.Vector3(self.model.position.x,self.model.position.y + self.boundBox.max.y/4,self.model.position.z),new THREE.Vector3(0,-1,0).normalize());
+			var collisionRay = new THREE.Ray(
+				new THREE.Vector3(self.model.position.x,self.boundBox.max.y/4,self.model.position.z),
+				self.movementVector.clone().normalize()
+			);
+
+			var downRay = new THREE.Ray(
+				new THREE.Vector3(self.model.position.x,self.model.position.y + self.boundBox.max.y/4,self.model.position.z),
+				new THREE.Vector3(0,-1,0).normalize()
+			);
+
 			var raycaster = new THREE.Raycaster();
 
 			raycaster.ray = collisionRay;
