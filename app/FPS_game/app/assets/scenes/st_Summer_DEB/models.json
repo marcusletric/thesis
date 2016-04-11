@@ -15,6 +15,39 @@
 							  [0,1, 0, 0],
                               [1,0, 0,70],
                               [0,0, 0, 1]]
+		},
+		{
+			"function": "housing",
+			"parameters": [3,5,1],
+			"postTransform": [[0,0,-1, 30],
+							  [0,1, 0, 0],
+                              [1,0, 0,70],
+                              [0,0, 0, 1]]
+		},
+		{
+			"function": "housing",
+			"parameters": [3,5,1],
+			"postTransform": [[0,0,-1, -30],
+							  [0,1, 0, 0],
+                              [1,0, 0,70],
+                              [0,0, 0, 1]]
+		},
+		{
+			"function": "housing",
+			"parameters": [3,5,1],
+			"postTransform": [[0,0,-1, -60],
+							  [0,1, 0, 0],
+                              [1,0, 0,70],
+                              [0,0, 0, 1]]
+		}
+		,
+		{
+			"function": "housing",
+			"parameters": [7,4,1],
+			"postTransform": [[0,0,1, -45],
+							  [0,1, 0, 0],
+                              [-1,0, 0, -70],
+                              [0,0, 0, 1]]
 		}
 		
 	  ]
