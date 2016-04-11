@@ -1,12 +1,14 @@
 angular.module('fps_game.player').factory('Player', function (webSocket){
-	return function (model,renderer) {
+	return function (renderer) {
 		var self = this;
-		
-		var movementSpeed = 3.2;
-
 		var playerID = null;
+
+		var movementSpeed = 3.2;
+		var oldLookAngles = null;
+		var modelLoaded = false;
+
 		self.mouseSensitivity = 0.8;
-		self.model = model;
+		self.model = new THREE.Object3D();
 		self.renderer = renderer;
 		self.camera = renderer.baseCamera;
 		self.lookTarget = new THREE.Object3D();
@@ -19,23 +21,10 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 		};
 
 		self.movementVector = null;
-
-		var boxhelper = new THREE.BoundingBoxHelper( self.model, 0xff0000 );
-		boxhelper.update();
-		self.boundBox = boxhelper.box;
-		
-		
 		self.lookAngles = {
 			x: 0,
 			y: 0,
 			z: 0
-		};
-		
-		init();
-
-		self.stop = function(){
-			self.animation.stop();
-			resetMovementFlag();
 		};
 
 		self.lookAt = function (xAngle,yAngle) {
@@ -44,15 +33,32 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 		};
 
 		self.update = function(deltaTime){
-			self.model.applyMatrix(calculateNextMatrix(deltaTime));
+			if(!modelLoaded){
+				return;
+			}
 
-			self.model.rotation.set(0,self.lookAngles.y,0);
+			var moving = moveUpdated();
+
+			if(moving) {
+				if(!self.animation.isPlaying){
+					self.animation.play(0);
+				}
+			} else {
+				if(self.animation.isPlaying){
+					self.animation.stop();
+				}
+			}
+
+			self.model.applyMatrix(calculateNextMatrix(deltaTime));
+			self.model.rotation.set(0, self.lookAngles.y, 0);
 			self.model.updateMatrix();
-			self.camera.position.set(self.model.position.x,self.model.position.y + self.boundBox.max.y,self.model.position.z);
+
+
+			self.camera.position.set(self.model.position.x, self.model.position.y + self.boundBox.max.y, self.model.position.z);
 			self.lookTarget.position.set(
-				self.model.position.x + -(Math.sin(self.lookAngles.y)),
-				self.model.position.y + self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x)),
-				self.model.position.z + -(Math.cos(self.lookAngles.y))
+					self.model.position.x + -(Math.sin(self.lookAngles.y)),
+					self.model.position.y + self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x)),
+					self.model.position.z + -(Math.cos(self.lookAngles.y))
 			);
 			self.camera.lookAt(self.lookTarget.position);
 			webSocket.playerUpdate(self.getNetworkPlayer());
@@ -67,23 +73,41 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 			return {
 				'id' : self.getID(),
 				'position' : self.model.position,
-				'rotation' : self.model.rotation
+				'rotation' : self.model.rotation,
+				'walking'  : self.animation && self.animation.isPlaying
 			}
 		};
 
+		init();
+
 		function init(){
-			self.model.traverse( function( child ) {
-				if ( child instanceof THREE.SkinnedMesh ) {
-					self.animation = new THREE.Animation( child, child.geometry.animation );
-				}
+			self.renderer.loadModel('/assets/meshes/player.dae').then(function (playerMesh) {
+				var boxhelper = new THREE.BoundingBoxHelper( playerMesh, 0xff0000 );
+				boxhelper.update();
+
+				self.boundBox = boxhelper.box;
+				self.model = playerMesh;
+				self.model.traverse( function( child ) {
+					if ( child instanceof THREE.SkinnedMesh ) {
+						self.animation = new THREE.Animation( child, child.geometry.animation );
+					}
+				});
+				self.renderer.addObject(self.model);
+				self.renderer.addObject(self.lookTarget);
+
+				resetMovementFlag();
+				modelLoaded = true;
 			});
-			resetMovementFlag();
 		}
 		
 		function resetMovementFlag(){
 			self.movementDirection = null;
 		}
-		
+
+		function moveUpdated(){
+			return self.movementFlags.F || self.movementFlags.B || self.movementFlags.L || self.movementFlags.R;
+		}
+
 		function calculateNextMatrix(deltaTime){
 			var distance = deltaTime * movementSpeed;
 			var mv = [0,0,0];

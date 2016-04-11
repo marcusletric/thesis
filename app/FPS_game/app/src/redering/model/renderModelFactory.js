@@ -9,9 +9,9 @@ angular.module('fps_game.rendering')
             self.scene = null;
             self.renderer = null;
             self.baseCamera = null;
-            self.baseLight = new THREE.DirectionalLight( 0xDEDEDE , 1);
+            //self.baseLight = new THREE.PointLight(  0xffccaa, 1, 10 );
 
-            self.ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
+            self.ambientLight = new THREE.AmbientLight( 0x202020 ); // soft white light
             self.actualCamera = null;
             self.sceneElements = [];
 			self.updateOnFrame = [];
@@ -60,7 +60,7 @@ angular.module('fps_game.rendering')
                 self.baseLight.shadowMapHeight = 1024;*/
 
                 self.addObject(self.baseCamera);
-                self.addObject(self.baseLight);
+                self.addObject(self.ambientLight);
                 
 
             }
@@ -101,17 +101,7 @@ angular.module('fps_game.rendering')
                 requestAnimationFrame(self.render);
 				var deltaTime = clock.getDelta();
 
-                for(coord in self.baseLight.position){
-                    self.baseLight.position[coord] = self.baseCamera.position[coord]-1;
-                }
-
-                //self.baseLight.lookAt(0,0,0);
-
                 renderer.render(self.scene, self.actualCamera);
-
-
-                self.baseLight.updateMatrix();
-                self.baseLight.updateMatrixWorld();
 				
 				THREE.AnimationHandler.update(deltaTime);
 				

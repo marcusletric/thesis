@@ -20,7 +20,7 @@ angular.module('fps_game', [
 
 angular.module('fps_game').constant('config',
     {
-        gameServerAddress : 'ws://192.168.1.3:9001',
+        gameServerAddress : 'ws://10.1.14.112:9001',
         rendering: {
 
         }

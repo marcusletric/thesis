@@ -13,28 +13,23 @@
 </head>
 <body>
 <!-- Library source includes -->
-  <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-  <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
-  <script src="bower_components/angular-loader/angular-loader.min.js"></script>
   <script src="bower_components/angular/angular.min.js"></script>
   <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="bower_components/html5-boilerplate/js/vendor/jquery-1.10.2.min.js"></script>
-  <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="bower_components/jquery/src/sizzle/dist/sizzle.min.js"></script>
 
 <!-- Dev source includes -->
   <script src="src/app.js"></script>
   <script src="src/common/commonModule.js"></script>
+  <script src="src/game/gameModule.js"></script>
   <script src="src/generators/generatorsModule.js"></script>
-  <script src="src/library/jquery-2.1.3.min.js"></script>
-  <script src="src/library/tween.min.js"></script>
   <script src="src/loaders/loaderModule.js"></script>
   <script src="src/network/networkModule.js"></script>
   <script src="src/player/playerModule.js"></script>
   <script src="src/redering/renderingModule.js"></script>
   <script src="src/common/services/Helper3D.js"></script>
+  <script src="src/game/controllers/gameSetupCtrl.js"></script>
+  <script src="src/game/services/networkGameDriver.js"></script>
   <script src="src/generators/services/housingGenerator.js"></script>
   <script src="src/library/threejs/three.min.js"></script>
   <script src="src/loaders/services/resourceFetcher.js"></script>
@@ -42,6 +37,7 @@
   <script src="src/network/services/webSocketService.js"></script>
   <script src="src/player/directives/keyboardControl.js"></script>
   <script src="src/player/directives/mouseControl.js"></script>
+  <script src="src/player/services/networkPlayerControlFactory.js"></script>
   <script src="src/player/services/playerFactory.js"></script>
   <script src="src/redering/ctrl/renderingCtrl.js"></script>
   <script src="src/redering/directive/ngWebgl.js"></script>
@@ -50,8 +46,6 @@
   <script src="src/library/threejs/animation/AnimationHandler.js"></script>
   <script src="src/library/threejs/animation/KeyFrameAnimation.js"></script>
   <script src="src/library/threejs/loaders/ColladaLoader.js"></script>
-  <script src="src/game/gameModule.js"></script>
-  <script src="src/game/controllers/gameSetupCtrl.js"></script>
 
 
   <!--[if lt IE 7]>

@@ -1,4 +1,4 @@
-var renderCtrl = function ($scope, $element, renderModelFactory) {
+var renderCtrl = function ($rootScope, $element, renderModelFactory) {
 
     var elem = $($element);
     var config = {
@@ -32,10 +32,10 @@ var renderCtrl = function ($scope, $element, renderModelFactory) {
         renderModel.renderer.shadowMapWidth = 2048;
         renderModel.renderer.shadowMapHeight = 2048;
         renderModel.render();
-        $scope.renderer = renderModel;
+        $rootScope.renderer = renderModel;
     };
 
     init();
 };
 
-angular.module('fps_game.rendering').controller('RenderingController', ['$scope', '$element', 'renderModelFactory', renderCtrl]);
+angular.module('fps_game.rendering').controller('RenderingController', ['$rootScope', '$element', 'renderModelFactory', renderCtrl]);

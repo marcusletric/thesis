@@ -1,6 +1,6 @@
 var ws = require("nodejs-websocket");
 const WSPORT=9001;
-const WSHOST="192.168.1.3";
+const WSHOST="10.1.14.112";
 
 var players = {};
 var currID = 10;

@@ -1,6 +1,7 @@
 angular.module('fps_game.common').service('helper3D', function () {
 
 	this.applyTransformationMatrix = function(model,tr){
+		model.updateMatrix();
 		var transMatrix = new THREE.Matrix4();
 		transMatrix.set(
 			tr[0],tr[1],tr[2],tr[3],

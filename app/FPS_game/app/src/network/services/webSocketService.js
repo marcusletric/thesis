@@ -10,7 +10,7 @@ angular.module('fps_game.network').service('webSocket', function($q,config){
         console.log('Connected, clientID set to: ' + clientID);
     };
 
-    this.init = function(){
+    this.connect = function(){
         gameServer =  new WebSocket(config.gameServerAddress);
 
         gameServer.onopen = function (event) {
