@@ -2,7 +2,7 @@ angular.module('fps_game.player').directive('mouseControl', function ($window) {
     return {
         restrict: 'A',
         link: function(scope){
-            var canvas = scope.renderer.renderer.domElement;
+            var canvas = app.renderer.renderer.domElement;
             var middle = {x:canvas.width/2,y:canvas.height/2};
             var currentPos = angular.extend({},middle);
             $($window).on('mousemove',function(event){
@@ -20,6 +20,10 @@ angular.module('fps_game.player').directive('mouseControl', function ($window) {
                     scope.player.updateLook(delta);
                 }
             });
+
+            $($window).on('click',function(event){
+                scope.player.shoot();
+            });
         }
-    };
+    }
 });

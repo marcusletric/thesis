@@ -24,6 +24,8 @@ var renderCtrl = function ($rootScope, $element, renderModelFactory) {
         renderModel.renderer.antialias = true;
         renderModel.renderer.shadowMapEnabled = true;
         renderModel.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+        renderModel.renderer.physicallyCorrectLights = true;
+        renderModel.renderer.toneMapping = THREE.ReinhardToneMapping;
 
         //renderModel.renderer.shadowMapCullFace = THREE.CullFaceBack;
 
@@ -31,8 +33,8 @@ var renderCtrl = function ($rootScope, $element, renderModelFactory) {
         renderModel.renderer.shadowMapDarkness = 0.8;
         renderModel.renderer.shadowMapWidth = 2048;
         renderModel.renderer.shadowMapHeight = 2048;
-        renderModel.render();
-        $rootScope.renderer = renderModel;
+        renderModel.startRender();
+        app.renderer = renderModel;
     };
 
     init();

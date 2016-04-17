@@ -1,3 +1,6 @@
+var app = {};
+app.renderer = null;
+
 angular.module('fps_game', [
   'ui.router',
   'fps_game.rendering',
@@ -20,7 +23,7 @@ angular.module('fps_game', [
 
 angular.module('fps_game').constant('config',
     {
-        gameServerAddress : 'ws://10.1.14.112:9001',
+        gameServerAddress : 'ws://localhost:9001',
         rendering: {
 
         }

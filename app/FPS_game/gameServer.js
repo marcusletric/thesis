@@ -1,6 +1,6 @@
 var ws = require("nodejs-websocket");
 const WSPORT=9001;
-const WSHOST="10.1.14.112";
+const WSHOST="localhost";
 
 var players = {};
 var currID = 10;
@@ -63,8 +63,9 @@ this.getPlayers = function(listener){
     };
 };
 
-this.playerUpdate = function(player){
+this.playerUpdate = function(player,connection){
     players[player.id] = player;
+    player.sender = connection.clientID;
     broadcast({
         'listener': 'playerUpdate',
         'data': player
@@ -81,7 +82,7 @@ this.getNewId = function(listener,conn){
 };
 
 function callFunction(command,arguments,connection){
-    if(command == 'getNewId'){
+    if(['getNewId', 'playerUpdate'].indexOf(command) > -1 ){
         arguments = arguments.concat(connection);
     }
 

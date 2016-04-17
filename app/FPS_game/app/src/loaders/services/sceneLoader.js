@@ -33,7 +33,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
             var sceneModels = response.data.scene_models;
             var loadedModels = [];
             sceneModels.forEach(function(model){
-                loadedModels.push(scope.renderer.loadModel(scenePath + model.model_src));
+                loadedModels.push(app.renderer.loadModel(scenePath + model.model_src));
             });
 			
             $q.all(loadedModels).then(function(loadedModels){
@@ -108,7 +108,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
 		
 		if(texturesLoaded && modelsLoaded){
 			modelsLoaded.forEach(function(model){
-				renderScope.renderer.addObject(model);
+				app.renderer.addObject(model);
 			});
 			renderScope.loading = false;
 			loadDeferred.resolve(true);

@@ -1,6 +1,7 @@
 angular.module('fps_game.game').service('networkGameDriver', function ($rootScope, webSocket, Player) {
     var self = this;
 
+    this.currentPlayer = null;
     this.networkPlayers = [];
     this.clientID = null;
 
@@ -19,6 +20,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     };
 
     this.addCurrentPlayer = function(player){
+        self.currentPlayer = player;
         webSocket.addPlayer(player.getNetworkPlayer());
     };
 
@@ -40,7 +42,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
      */
     function addNetworkPlayer(player){
         if(player.id != self.clientID) {
-            var newPlayer = new Player($rootScope.renderer);
+            var newPlayer = new Player(app.renderer);
             newPlayer.setID(player.id);
             newPlayer.model.position.set(player.position.x,player.position.y,player.position.z);
             newPlayer.model.rotation.set(player.rotation._x,player.rotation._y,player.rotation._z,player.rotation._order);
@@ -57,7 +59,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
      */
     function removeNetworkPlayer(player){
         if(self.networkPlayers[player.id]){
-            $rootScope.renderer.removeObject(self.networkPlayers[player.id].model);
+            app.renderer.removeObject(self.networkPlayers[player.id].model);
             delete(self.networkPlayers[player.id]);
         }
     }

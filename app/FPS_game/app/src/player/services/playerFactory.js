@@ -7,6 +7,8 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 		var oldLookAngles = null;
 		var modelLoaded = false;
 
+		self.health = 100;
+
 		self.mouseSensitivity = 0.8;
 		self.model = new THREE.Object3D();
 		self.renderer = renderer;
@@ -72,11 +74,49 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 		self.getNetworkPlayer = function(){
 			return {
 				'id' : self.getID(),
+				'health' : self.health,
 				'position' : self.model.position,
 				'rotation' : self.model.rotation,
 				'walking'  : self.animation && self.animation.isPlaying
 			}
 		};
+
+		self.shoot = function(){
+			var shootRay = new THREE.Ray(
+				new THREE.Vector3(self.camera.position.x, self.camera.position.y, self.camera.position.z),
+				new THREE.Vector3(self.lookTarget.position.x - self.camera.position.x,self.lookTarget.position.y - self.camera.position.y,self.lookTarget.position.z -self.camera.position.z).normalize()
+			);
+
+			var raycaster = new THREE.Raycaster();
+
+			raycaster.ray = shootRay;
+
+			var closest = raycaster.intersectObjects( self.renderer.scene.children, true )[0];
+
+			if(closest.object.rootObj && closest.object.rootObj.player){
+				closest.object.rootObj.player.takeDamage(30);
+			}
+		};
+
+		self.takeDamage = function(dmg) {
+			self.health -= dmg;
+			if(self.health < 1){
+				self.health = 0;
+				self.die();
+			}
+			webSocket.playerUpdate(self.getNetworkPlayer());
+		};
+
+		self.die = function(){
+			/*animateDeath().then(function(){
+				self.respawn();
+			});*/
+		};
+
+		self.respawn = function(){
+			self.health = 100;
+		};
+
 
 		init();
 
@@ -88,10 +128,12 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 				self.boundBox = boxhelper.box;
 				self.model = playerMesh;
 				self.model.traverse( function( child ) {
+					child.rootObj = self.model;
 					if ( child instanceof THREE.SkinnedMesh ) {
 						self.animation = new THREE.Animation( child, child.geometry.animation );
 					}
 				});
+				self.model.player = self;
 				self.renderer.addObject(self.model);
 				self.renderer.addObject(self.lookTarget);
 
@@ -121,7 +163,7 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 			self.movementVector.applyAxisAngle(new THREE.Vector3(0,1,0).normalize(), self.lookAngles.y);
 
 			var collisionRay = new THREE.Ray(
-				new THREE.Vector3(self.model.position.x,self.boundBox.max.y/4,self.model.position.z),
+				new THREE.Vector3(self.model.position.x,self.boundBox.max.y/3,self.model.position.z),
 				self.movementVector.clone().normalize()
 			);
 

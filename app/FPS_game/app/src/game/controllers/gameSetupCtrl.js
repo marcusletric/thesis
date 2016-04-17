@@ -28,9 +28,9 @@ angular.module('fps_game.game').controller('GameSetupCtrl', function ($scope, $q
 		 * @returns {$q.promise}
 		 */
 		function addUserPlayer(clientID) {
-			$scope.player = new Player($scope.renderer);
+			$scope.player = new Player(app.renderer);
 			$scope.player.setID(clientID);
-			$scope.renderer.addFrameUpdatedObject($scope.player);
+			app.renderer.addFrameUpdatedObject($scope.player);
 		}
 	};
 

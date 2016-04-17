@@ -11,7 +11,7 @@ angular.module('fps_game.rendering')
             self.baseCamera = null;
             //self.baseLight = new THREE.PointLight(  0xffccaa, 1, 10 );
 
-            self.ambientLight = new THREE.AmbientLight( 0x202020 ); // soft white light
+            self.ambientLight = new THREE.AmbientLight( 0x050505 ); // soft white light
             self.actualCamera = null;
             self.sceneElements = [];
 			self.updateOnFrame = [];
@@ -97,8 +97,12 @@ angular.module('fps_game.rendering')
                 return deferred.promise;
             };
 
-            self.render = function () {
-                requestAnimationFrame(self.render);
+            self.startRender = function(){
+                render();
+            };
+
+            function render() {
+                requestAnimationFrame(render);
 				var deltaTime = clock.getDelta();
 
                 renderer.render(self.scene, self.actualCamera);
