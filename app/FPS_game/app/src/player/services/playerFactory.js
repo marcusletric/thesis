@@ -3,13 +3,12 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 		var self = this;
 		var playerID = null;
 
-		var movementSpeed = 3.2;
+		var movementSpeed = 2.2;
 		var oldLookAngles = null;
 		var modelLoaded = false;
 
 		self.health = 100;
 
-		self.mouseSensitivity = 0.8;
 		self.model = new THREE.Object3D();
 		self.renderer = renderer;
 		self.camera = renderer.baseCamera;
@@ -168,7 +167,7 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 			);
 
 			var downRay = new THREE.Ray(
-				new THREE.Vector3(self.model.position.x,self.model.position.y + self.boundBox.max.y/4,self.model.position.z),
+				new THREE.Vector3(self.model.position.x,self.model.position.y + self.boundBox.max.y/2,self.model.position.z),
 				new THREE.Vector3(0,-1,0).normalize()
 			);
 
@@ -194,8 +193,8 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 
 			closest = raycaster.intersectObjects( nearObjects, true )[0];
 
-			if( closest && closest.distance < self.boundBox.max.y/4 - self.model.position.y ){
-				self.movementVector.setY(self.boundBox.max.y/4 - closest.distance);
+			if( closest && closest.distance < self.boundBox.max.y/2 - self.model.position.y ){
+				self.movementVector.setY(self.boundBox.max.y/2 - closest.distance);
 			} else if(closest) {
 				self.movementVector.setY(0);
 			} else if(self.model.position.y > 0) {

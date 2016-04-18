@@ -6,8 +6,8 @@
       <authoring_tool>OpenCOLLADA for 3ds Max;  Version: 1.4.1;  Revision: exported;  Platform: x64;  Configuration: Release_Max2010_static</authoring_tool>
       <source_data>file:///C:/Users/Administrator/Documents/3dsMax/scenes/egbolt.max</source_data>
     </contributor>
-    <created>2016-04-14T22:40:10</created>
-    <modified>2016-04-14T22:40:10</modified>
+    <created>2016-04-18T22:17:17</created>
+    <modified>2016-04-18T22:17:17</modified>
     <unit name="inch" meter="0.0254"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -15,7 +15,7 @@
     <effect id="ColorEffectR204G204B204">
       <profile_COMMON>
         <technique sid="common">
-          <phong>
+          <constant>
             <ambient>
               <color>0.8 0.8 0.8 1</color>
             </ambient>
@@ -37,20 +37,20 @@
             <transparency>
               <float>1</float>
             </transparency>
-          </phong>
+          </constant>
         </technique>
       </profile_COMMON>
     </effect>
     <effect id="Material_material">
       <profile_COMMON>
-        <newparam sid="two-styx-night-panorama-fish-eye_jpg-surface">
+        <newparam sid="daylight_sky_jpg-surface">
           <surface type="2D">
-            <init_from>two-styx-night-panorama-fish-eye_jpg</init_from>
+            <init_from>daylight_sky_jpg</init_from>
           </surface>
         </newparam>
-        <newparam sid="two-styx-night-panorama-fish-eye_jpg-sampler">
+        <newparam sid="daylight_sky_jpg-sampler">
           <sampler2D>
-            <source>two-styx-night-panorama-fish-eye_jpg-surface</source>
+            <source>daylight_sky_jpg-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -62,7 +62,7 @@
               <color>0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="two-styx-night-panorama-fish-eye_jpg-sampler" texcoord="CHANNEL1"/>
+              <texture texture="daylight_sky_jpg-sampler" texcoord="CHANNEL1"/>
             </diffuse>
             <specular>
               <color>0 0 0 1</color>
@@ -104,6 +104,76 @@
         </technique>
       </extra>
     </effect>
+    <effect id="_1_-_Default">
+      <profile_COMMON>
+        <newparam sid="GRASS2_JPG-surface">
+          <surface type="2D">
+            <init_from>GRASS2_JPG</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="GRASS2_JPG-sampler">
+          <sampler2D>
+            <source>GRASS2_JPG-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0.5882353 0.5882353 0.5882353 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="GRASS2_JPG-sampler" texcoord="CHANNEL1"/>
+            </diffuse>
+            <specular>
+              <color>0.9 0.9 0.9 1</color>
+            </specular>
+            <shininess>
+              <float>0</float>
+            </shininess>
+            <reflective>
+              <color>0 0 0 1</color>
+            </reflective>
+            <transparent opaque="A_ONE">
+              <color>1 1 1 1</color>
+            </transparent>
+            <transparency>
+              <float>1</float>
+            </transparency>
+          </blinn>
+          <extra>
+            <technique profile="OpenCOLLADA3dsMax">
+              <bump bumptype="HEIGHTFIELD">
+                <texture texture="GRASS2_JPG-sampler" texcoord="CHANNEL1"/>
+              </bump>
+            </technique>
+          </extra>
+        </technique>
+      </profile_COMMON>
+      <extra>
+        <technique profile="OpenCOLLADA3dsMax">
+          <extended_shader>
+            <apply_reflection_dimming>0</apply_reflection_dimming>
+            <dim_level>0</dim_level>
+            <falloff_type>0</falloff_type>
+            <index_of_refraction>1.5</index_of_refraction>
+            <opacity_type>0</opacity_type>
+            <reflection_level>3</reflection_level>
+            <wire_size>1</wire_size>
+            <wire_units>0</wire_units>
+          </extended_shader>
+          <shader>
+            <ambient_diffuse_lock>0</ambient_diffuse_lock>
+            <ambient_diffuse_texture_lock>1</ambient_diffuse_texture_lock>
+            <diffuse_specular_lock>0</diffuse_specular_lock>
+            <soften>0.1</soften>
+            <use_self_illum_color>0</use_self_illum_color>
+          </shader>
+        </technique>
+      </extra>
+    </effect>
   </library_effects>
   <library_materials>
     <material id="ColorEffectR204G204B204-material" name="ColorEffectR204G204B204-material">
@@ -112,14 +182,17 @@
     <material id="Material_material-material" name="Material_material">
       <instance_effect url="#Material_material"/>
     </material>
+    <material id="_1_-_Default-material" name="_1_-_Default">
+      <instance_effect url="#_1_-_Default"/>
+    </material>
   </library_materials>
   <library_geometries>
     <geometry id="geom-Plane" name="Plane">
       <mesh>
         <source id="geom-Plane-positions">
-          <float_array id="geom-Plane-positions-array" count="12">-1 -1 0 1 -1 0 -1 1 0 1 1 0</float_array>
+          <float_array id="geom-Plane-positions-array" count="0"/>
           <technique_common>
-            <accessor source="#geom-Plane-positions-array" count="4" stride="3">
+            <accessor source="#geom-Plane-positions-array" count="0" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
@@ -136,13 +209,46 @@
             </accessor>
           </technique_common>
         </source>
+        <source id="geom-Plane-map1">
+          <float_array id="geom-Plane-map1-array" count="0"/>
+          <technique_common>
+            <accessor source="#geom-Plane-map1-array" count="0" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Plane-map1-textangents">
+          <float_array id="geom-Plane-map1-textangents-array" count="0"/>
+          <technique_common>
+            <accessor source="#geom-Plane-map1-textangents-array" count="0" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Plane-map1-texbinormals">
+          <float_array id="geom-Plane-map1-texbinormals-array" count="0"/>
+          <technique_common>
+            <accessor source="#geom-Plane-map1-texbinormals-array" count="0" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
         <vertices id="geom-Plane-vertices">
           <input semantic="POSITION" source="#geom-Plane-positions"/>
         </vertices>
-        <triangles material="ColorMaterial" count="2">
+        <triangles material="ColorMaterial" count="0">
           <input semantic="VERTEX" source="#geom-Plane-vertices" offset="0"/>
           <input semantic="NORMAL" source="#geom-Plane-normals" offset="1"/>
-          <p>2 0 3 1 1 2 0 3 2 0 1 2</p>
+          <input semantic="TEXCOORD" source="#geom-Plane-map1" offset="2" set="0"/>
+          <input semantic="TEXTANGENT" source="#geom-Plane-map1-textangents" offset="3" set="1"/>
+          <input semantic="TEXBINORMAL" source="#geom-Plane-map1-texbinormals" offset="3" set="1"/>
+          <p/>
         </triangles>
       </mesh>
     </geometry>
@@ -211,6 +317,71 @@
         </triangles>
       </mesh>
     </geometry>
+    <geometry id="geom-Plane01" name="Plane01">
+      <mesh>
+        <source id="geom-Plane01-positions">
+          <float_array id="geom-Plane01-positions-array" count="75">-13352.71 -12374.28 0 -6676.354 -12374.28 0 0 -12374.28 0 6676.354 -12374.28 0 13352.71 -12374.28 0 -13352.71 -6187.138 0 -6676.354 -6187.138 0 0 -6187.138 0 6676.354 -6187.138 0 13352.71 -6187.138 0 -13352.71 0 0 -6676.354 0 0 0 0 0 6676.354 0 0 13352.71 0 0 -13352.71 6187.138 0 -6676.354 6187.138 0 0 6187.138 0 6676.354 6187.138 0 13352.71 6187.138 0 -13352.71 12374.28 0 -6676.354 12374.28 0 0 12374.28 0 6676.354 12374.28 0 13352.71 12374.28 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Plane01-positions-array" count="25" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Plane01-normals">
+          <float_array id="geom-Plane01-normals-array" count="75">0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#geom-Plane01-normals-array" count="25" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Plane01-map1">
+          <float_array id="geom-Plane01-map1-array" count="75">-4.350145 -4.350064 15 70.57491 -4.350082 15 145.5 -4.350101 15 220.425 -4.350118 15 295.3501 -4.350136 15 -4.350127 70.575 15 70.57492 70.57497 15 145.5 70.57495 15 220.425 70.57493 15 295.3501 70.57491 15 -4.350109 145.5 15 70.57494 145.5 15 145.5 145.5 15 220.4251 145.5 15 295.3501 145.5 15 -4.350091 220.4251 15 70.57496 220.4251 15 145.5 220.425 15 220.4251 220.425 15 295.3501 220.425 15 -4.350073 295.3501 15 70.57498 295.3501 15 145.5 295.3501 15 220.4251 295.3501 15 295.3502 295.3501 15</float_array>
+          <technique_common>
+            <accessor source="#geom-Plane01-map1-array" count="25" stride="3">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+              <param name="P" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Plane01-map1-textangents">
+          <float_array id="geom-Plane01-map1-textangents-array" count="75">1 3.14552e-7 0 1 3.0079e-7 0 1 2.57539e-7 0 1 2.12322e-7 0 1 2.26084e-7 0 1 2.41812e-7 0 1 2.56556e-7 0 1 2.39846e-7 0 1 2.61471e-7 0 1 2.1822e-7 0 1 1.88731e-7 0 1 2.51641e-7 0 1 1.57276e-7 0 1 2.67369e-7 0 1 2.20186e-7 0 1 1.25821e-7 0 1 2.83097e-7 0 1 1.57276e-7 0 1 2.83097e-7 0 1 4.40373e-7 0 1 0 0 1 1.88731e-7 0 1 2.51641e-7 0 1 1.25821e-7 0 1 4.71828e-7 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Plane01-map1-textangents-array" count="25" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="geom-Plane01-map1-texbinormals">
+          <float_array id="geom-Plane01-map1-texbinormals-array" count="75">3.14552e-7 -1 0 3.0079e-7 -1 0 2.57539e-7 -1 0 2.12322e-7 -1 0 2.26084e-7 -1 0 2.41812e-7 -1 0 2.56556e-7 -1 0 2.39846e-7 -1 0 2.61471e-7 -1 0 2.1822e-7 -1 0 1.88731e-7 -1 0 2.51641e-7 -1 0 1.57276e-7 -1 0 2.67369e-7 -1 0 2.20186e-7 -1 0 1.25821e-7 -1 0 2.83097e-7 -1 0 1.57276e-7 -1 0 2.83097e-7 -1 0 4.40373e-7 -1 0 0 -1 0 1.88731e-7 -1 0 2.51641e-7 -1 0 1.25821e-7 -1 0 4.71828e-7 -1 0</float_array>
+          <technique_common>
+            <accessor source="#geom-Plane01-map1-texbinormals-array" count="25" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="geom-Plane01-vertices">
+          <input semantic="POSITION" source="#geom-Plane01-positions"/>
+        </vertices>
+        <triangles material="_1_-_Default_1" count="32">
+          <input semantic="VERTEX" source="#geom-Plane01-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#geom-Plane01-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#geom-Plane01-map1" offset="2" set="0"/>
+          <input semantic="TEXTANGENT" source="#geom-Plane01-map1-textangents" offset="3" set="1"/>
+          <input semantic="TEXBINORMAL" source="#geom-Plane01-map1-texbinormals" offset="3" set="1"/>
+          <p>5 0 5 0 0 1 0 1 6 2 6 2 1 3 1 3 6 2 6 2 0 1 0 1 6 2 6 2 1 3 1 3 7 4 7 4 2 5 2 5 7 4 7 4 1 3 1 3 7 4 7 4 2 5 2 5 8 6 8 6 3 7 3 7 8 6 8 6 2 5 2 5 8 6 8 6 3 7 3 7 9 8 9 8 4 9 4 9 9 8 9 8 3 7 3 7 10 10 10 10 5 0 5 0 11 11 11 11 6 2 6 2 11 11 11 11 5 0 5 0 11 11 11 11 6 2 6 2 12 12 12 12 7 4 7 4 12 12 12 12 6 2 6 2 12 12 12 12 7 4 7 4 13 13 13 13 8 6 8 6 13 13 13 13 7 4 7 4 13 13 13 13 8 6 8 6 14 14 14 14 9 8 9 8 14 14 14 14 8 6 8 6 15 15 15 15 10 10 10 10 16 16 16 16 11 11 11 11 16 16 16 16 10 10 10 10 16 16 16 16 11 11 11 11 17 17 17 17 12 12 12 12 17 17 17 17 11 11 11 11 17 17 17 17 12 12 12 12 18 18 18 18 13 13 13 13 18 18 18 18 12 12 12 12 18 18 18 18 13 13 13 13 19 19 19 19 14 14 14 14 19 19 19 19 13 13 13 13 20 20 20 20 15 15 15 15 21 21 21 21 16 16 16 16 21 21 21 21 15 15 15 15 21 21 21 21 16 16 16 16 22 22 22 22 17 17 17 17 22 22 22 22 16 16 16 16 22 22 22 22 17 17 17 17 23 23 23 23 18 18 18 18 23 23 23 23 17 17 17 17 23 23 23 23 18 18 18 18 24 24 24 24 19 19 19 19 24 24 24 24 18 18 18 18</p>
+        </triangles>
+      </mesh>
+    </geometry>
   </library_geometries>
   <library_lights>
     <light id="EnvironmentAmbientLight" name="EnvironmentAmbientLight">
@@ -222,8 +393,11 @@
     </light>
   </library_lights>
   <library_images>
-    <image id="two-styx-night-panorama-fish-eye_jpg">
-      <init_from>./night_sky.jpg</init_from>
+    <image id="daylight_sky_jpg">
+      <init_from>./images/0_daylight_sky.jpg</init_from>
+    </image>
+    <image id="GRASS2_JPG">
+      <init_from>./images/1_GRASS2.JPG</init_from>
     </image>
   </library_images>
   <library_visual_scenes>
@@ -232,8 +406,7 @@
         <instance_light url="#EnvironmentAmbientLight"/>
       </node>
       <node id="node-Plane" name="Plane">
-        <rotate>0.999998 0.00202091 3.29248e-10 -180</rotate>
-        <scale>-14456.81 -14456.81 -39.37008</scale>
+        <matrix>-14456.69 -58.43169 -5.185e-8 0 -58.43169 14456.69 1.28283e-5 0 0 -0.004710626 39.37008 0 0 0 0 1</matrix>
         <instance_geometry url="#geom-Plane">
           <bind_material>
             <technique_common>
@@ -251,7 +424,7 @@
         </extra>
       </node>
       <node id="node-Sphere" name="Sphere">
-        <scale>11811.02 11811.02 11811.02</scale>
+        <matrix>11811.02 0 0 0 0 11811.02 0 0 0 0 11811.02 0 0 0 0 1</matrix>
         <instance_geometry url="#geom-Sphere">
           <bind_material>
             <technique_common>
@@ -270,11 +443,18 @@
           </technique>
         </extra>
       </node>
-      <node id="node-Hemi" name="Hemi">
-        <translate>0 0 571.5061</translate>
-        <rotate>-4.37114e-8 1 -4.37114e-8 -180</rotate>
-        <scale>39.37008 39.37008 39.37008</scale>
-        <instance_light url="#Hemi-light"/>
+      <node id="node-Plane01" name="Plane01">
+        <matrix>1 0 0 -226.2741 0 1 0 -172.6641 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#geom-Plane01">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="_1_-_Default_1" target="#_1_-_Default-material">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
         <extra>
           <technique profile="OpenCOLLADA">
             <cast_shadows>1</cast_shadows>

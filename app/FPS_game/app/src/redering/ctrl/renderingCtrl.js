@@ -3,7 +3,7 @@ var renderCtrl = function ($rootScope, $element, renderModelFactory) {
     var elem = $($element);
     var config = {
         'camera':{
-            'fov':90,
+            'fov':60,
             'aspect':elem.width()/elem.height(),
             'near':0.01,
             'far':1000
@@ -22,17 +22,14 @@ var renderCtrl = function ($rootScope, $element, renderModelFactory) {
         elem.append(renderModel.renderer.domElement);
         renderModel.renderer.setSize(config.dimensions.width,config.dimensions.height);
         renderModel.renderer.antialias = true;
-        renderModel.renderer.shadowMapEnabled = true;
-        renderModel.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+        //renderModel.renderer.shadowMapEnabled = true;
+        //renderModel.renderer.shadowMapType = THREE.PCFSoftShadowMap;
         renderModel.renderer.physicallyCorrectLights = true;
-        renderModel.renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderModel.renderer.gammaInput = true;
+        renderModel.renderer.gammaOutput = true;
 
-        //renderModel.renderer.shadowMapCullFace = THREE.CullFaceBack;
+        renderModel.renderer.shadowMap.cullFace = THREE.CullFaceBack;
 
-        renderModel.renderer.shadowMapBias = 0.0002;
-        renderModel.renderer.shadowMapDarkness = 0.8;
-        renderModel.renderer.shadowMapWidth = 2048;
-        renderModel.renderer.shadowMapHeight = 2048;
         renderModel.startRender();
         app.renderer = renderModel;
     };

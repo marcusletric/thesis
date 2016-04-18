@@ -9,21 +9,48 @@ angular.module('fps_game.rendering')
             self.scene = null;
             self.renderer = null;
             self.baseCamera = null;
-            //self.baseLight = new THREE.PointLight(  0xffccaa, 1, 10 );
 
-            self.ambientLight = new THREE.AmbientLight( 0x050505 ); // soft white light
+            var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.7 );
+            hemiLight.color.setHSL( 0, 0, 0.86 );
+            hemiLight.groundColor.setHSL( 0, 0, 0.42 );
+            hemiLight.position.set( 0, 500, 0 );
+
+            //
+
+            var dirLight = new THREE.DirectionalLight( 0xffffff, 1.5 );
+            dirLight.color.setHSL( 0.1, 1, 0.95 );
+            dirLight.position.set( 1, 1.75, -0.7 );
+            dirLight.position.multiplyScalar( 200 );
+
+            dirLight.castShadow = true;
+
+            dirLight.shadowMapWidth = 4096;
+            dirLight.shadowMapHeight = 4096;
+
+            var d = 100;
+
+            dirLight.shadowCameraLeft = -d;
+            dirLight.shadowCameraRight = d;
+            dirLight.shadowCameraTop = d;
+            dirLight.shadowCameraBottom = -d;
+
+            dirLight.shadowCameraFar = 1000;
+            dirLight.shadowBias = -0.0003;
+            dirLight.shadowDarkness = 3;
+            //dirLight.shadowCameraVisible = true;
+
             self.actualCamera = null;
             self.sceneElements = [];
 			self.updateOnFrame = [];
             self.config = config;
 
             function construct(constructor, args) {
-                function F() {
+                function renderModel() {
                     return constructor.apply(this, args);
                 }
 
-                F.prototype = constructor.prototype;
-                return new F();
+                renderModel.prototype = constructor.prototype;
+                return new renderModel();
             }
 
             function getConfigParam(param) {
@@ -38,30 +65,18 @@ angular.module('fps_game.rendering')
                 self.renderer = new THREE.WebGLRenderer();
                 self.baseCamera = construct(THREE.PerspectiveCamera, getConfigParam('camera'));
                 self.actualCamera = self.baseCamera;
+                self.addObject(self.baseCamera);
+
+                var initialCamTarget = new THREE.Object3D();
+                initialCamTarget.position.set(0,0,0);
+                self.addObject(initialCamTarget);
 
                 self.actualCamera.position.set(0,100,0);
+                self.actualCamera.lookAt(initialCamTarget);
 
-                /*self.baseLight.castShadow = true;
-                self.baseLight.shadowDarkness = 0.6;
-                self.baseLight.shadowCameraVisible = false;
-                //self.baseLight.shadowCameraNear = getConfigParam('camera').near;
-                //self.baseLight.shadowCameraFar = getConfigParam('camera').far;
-                self.baseLight.shadowCameraNear = 0.1;
-                self.baseLight.shadowCameraFar = 1000;
-                self.baseLight.shadowCameraFov = 170;
-                self.baseLight.shadowCameraLeft = 50; // CHANGED
-                self.baseLight.shadowCameraRight = -50; // CHANGED
-                self.baseLight.shadowCameraTop = 50; // CHANGED
-                self.baseLight.shadowCameraBottom = -50; // CHANGED*/
+                self.addObject(hemiLight);
+                self.addObject(dirLight);
 
-                /*self.baseLight.shadowMapBias = 0.0039;
-                self.baseLight.shadowMapDarkness = 0.1;
-                self.baseLight.shadowMapWidth = 1024;
-                self.baseLight.shadowMapHeight = 1024;*/
-
-                self.addObject(self.baseCamera);
-                self.addObject(self.ambientLight);
-                
 
             }
 			
@@ -88,11 +103,11 @@ angular.module('fps_game.rendering')
                     dae.traverse( function( child ) {
                         if( child instanceof THREE.Mesh ) {
                             child.material.bumpScale = 0.002;
-                            child.receiveShadow = true;
-                            child.castShadow = true;
                         }
-                        deferred.resolve(dae);
+                        child.receiveShadow = true;
+                        child.castShadow = true;
                     } );
+                    deferred.resolve(dae);
                 });
                 return deferred.promise;
             };
@@ -112,9 +127,7 @@ angular.module('fps_game.rendering')
 				self.updateOnFrame.forEach(function(object){
 					object.update(deltaTime);
 				});
-				
-                //self.baseLight.target = self.baseCamera.target;
-            };
+            }
 
             $($window).on('resize',function(){
                 self.renderer.setSize(self.config.element.width(),self.config.element.height());

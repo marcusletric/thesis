@@ -1,4 +1,4 @@
-angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, housingGenerator,helper3D) {
+angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, housingGenerator, sceneReplacements, helper3D) {
 
     var self = this;
     var renderScope = null;
@@ -65,11 +65,11 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
 						readyModels.push(newModel)
                     }
 					
-					/*if(loadedModel.meta.replacements){
+					if(loadedModel.meta.replacements){
                         loadedModel.meta.replacements.forEach(function(replacement){
-							newModel
+							replaceRecursive(newModel,replacement);
 						});
-                    }*/
+                    }
                 });
 				handleLoad(readyModels);
             });
@@ -112,6 +112,22 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
 			});
 			renderScope.loading = false;
 			loadDeferred.resolve(true);
+		}
+	}
+
+	function replaceRecursive(model,replacement){
+		if(needReplace(model, replacement)){
+			model = sceneReplacements[replacement.replacementName](model);
+		} else {
+			if(model.children && model.children.length){
+				for(index in model.children){
+					replaceRecursive(model.children[index],replacement);
+				}
+			}
+		}
+
+		function needReplace(model, replacement){
+			return model.type == replacement.type && model.parent.name.match(replacement.nameRegex)
 		}
 	}
 });
