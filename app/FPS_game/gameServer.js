@@ -1,6 +1,6 @@
 var ws = require("nodejs-websocket");
 const WSPORT=9001;
-const WSHOST="localhost";
+const WSHOST="10.1.14.112";
 
 var players = {};
 var currID = 10;
@@ -63,11 +63,17 @@ this.getPlayers = function(listener){
     };
 };
 
-this.playerUpdate = function(player,connection){
+this.playerUpdate = function(player){
     players[player.id] = player;
-    player.sender = connection.clientID;
     broadcast({
         'listener': 'playerUpdate',
+        'data': player
+    });
+};
+
+this.playerTakeDmg = function(player){
+    broadcast({
+        'listener': 'playerTakeDmg',
         'data': player
     });
 };

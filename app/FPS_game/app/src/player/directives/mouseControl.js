@@ -5,7 +5,7 @@ angular.module('fps_game.player').directive('mouseControl', function ($window) {
             var canvas = app.renderer.renderer.domElement;
             var middle = {x:canvas.width/2,y:canvas.height/2};
             var currentPos = angular.extend({},middle);
-            var mouseSensitivity = 0.95;
+            var mouseSensitivity = 0.7;
             $($window).on('mousemove',function(event){
                 if(scope.pointerLock && ! scope.loading){
                     currentPos.x += event.originalEvent.movementX*mouseSensitivity;

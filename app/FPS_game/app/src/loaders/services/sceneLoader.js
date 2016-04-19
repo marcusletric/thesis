@@ -1,4 +1,4 @@
-angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, housingGenerator, sceneReplacements, helper3D) {
+angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, multiplyGenerator, sceneReplacements, helper3D) {
 
     var self = this;
     var renderScope = null;
@@ -6,6 +6,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
 	var modelsLoaded = false;
 	var texturesLoaded = false;
 	var loadDeferred = null;
+	var sceneModels = [];
 	
 	var imageloader = new THREE.ImageLoader();
 	imageloader.manager.onStart = function(){
@@ -18,10 +19,11 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
 	};
 
     this.generators = {
-        "housing" : housingGenerator
+        "multiply" : multiplyGenerator
     };
 
     this.loadScene = function(scope,scenePath){
+		var sceneModels = [];
 		loadDeferred = $q.defer();
         scope.loading = true;
 
@@ -33,7 +35,16 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
             var sceneModels = response.data.scene_models;
             var loadedModels = [];
             sceneModels.forEach(function(model){
-                loadedModels.push(app.renderer.loadModel(scenePath + model.model_src));
+				if(model.model_src){
+					loadedModels.push(app.renderer.loadModel(scenePath + model.model_src, model.model_name));
+				}
+
+				if(model.THREE_object){
+					var deferred = $q.defer();
+					var constructor = THREE[model.THREE_object];
+					loadedModels.push(deferred.promise);
+					deferred.resolve( new ( constructor.bind.apply( constructor, model.THREE_object_params ) )());
+				}
             });
 			
             $q.all(loadedModels).then(function(loadedModels){
@@ -108,6 +119,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, h
 		
 		if(texturesLoaded && modelsLoaded){
 			modelsLoaded.forEach(function(model){
+				sceneModels.push(model);
 				app.renderer.addObject(model);
 			});
 			renderScope.loading = false;

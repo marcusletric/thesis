@@ -1,13 +1,15 @@
-angular.module('fps_game.player').factory('Player', function (webSocket){
+angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,gameDriver,webSocket){
 	return function (renderer) {
 		var self = this;
 		var playerID = null;
 
-		var movementSpeed = 2.2;
+		var movementSpeed = 3.2;
 		var oldLookAngles = null;
 		var modelLoaded = false;
 
 		self.health = 100;
+		self.tookDmg = false;
+		self.dead = false;
 
 		self.model = new THREE.Object3D();
 		self.renderer = renderer;
@@ -50,15 +52,19 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 				}
 			}
 
-			self.model.applyMatrix(calculateNextMatrix(deltaTime));
-			self.model.rotation.set(0, self.lookAngles.y, 0);
+			if(self.dead){
+				self.model.rotation.set(Math.PI/2, self.lookAngles.y, 0);
+			} else {
+				self.model.applyMatrix(calculateNextMatrix(deltaTime));
+				self.model.rotation.set(0, self.lookAngles.y, 0);
+			}
 			self.model.updateMatrix();
 
 
 			self.camera.position.set(self.model.position.x, self.model.position.y + self.boundBox.max.y, self.model.position.z);
 			self.lookTarget.position.set(
 					self.model.position.x + -(Math.sin(self.lookAngles.y)),
-					self.model.position.y + self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x)),
+					self.model.position.y + self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x) ),
 					self.model.position.z + -(Math.cos(self.lookAngles.y))
 			);
 			self.camera.lookAt(self.lookTarget.position);
@@ -81,6 +87,10 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 		};
 
 		self.shoot = function(){
+			if(self.dead){
+				return;
+			}
+
 			var shootRay = new THREE.Ray(
 				new THREE.Vector3(self.camera.position.x, self.camera.position.y, self.camera.position.z),
 				new THREE.Vector3(self.lookTarget.position.x - self.camera.position.x,self.lookTarget.position.y - self.camera.position.y,self.lookTarget.position.z -self.camera.position.z).normalize()
@@ -92,8 +102,8 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 
 			var closest = raycaster.intersectObjects( self.renderer.scene.children, true )[0];
 
-			if(closest.object.rootObj && closest.object.rootObj.player){
-				closest.object.rootObj.player.takeDamage(30);
+			if(closest.object.rootObj && closest.object.rootObj.player && closest.object.rootObj.player.getID() != playerID){
+				webSocket.playerTakeDmg(angular.extend(closest.object.rootObj.player.getNetworkPlayer(),{"dmg": 30}));
 			}
 		};
 
@@ -103,17 +113,22 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 				self.health = 0;
 				self.die();
 			}
-			webSocket.playerUpdate(self.getNetworkPlayer());
+			self.tookDmg = true;
+			$rootScope.$digest();
+			$timeout(function(){
+				self.tookDmg = false;
+			},100);
 		};
 
 		self.die = function(){
-			/*animateDeath().then(function(){
-				self.respawn();
-			});*/
+			self.dead = true;
+			$timeout(self.respawn,5000);
 		};
 
 		self.respawn = function(){
+			self.dead = false;
 			self.health = 100;
+			self.model.position.set((Math.random()*-50)+25,1,(Math.random()*-50)+25);
 		};
 
 
@@ -195,13 +210,15 @@ angular.module('fps_game.player').factory('Player', function (webSocket){
 
 			if( closest && closest.distance < self.boundBox.max.y/2 - self.model.position.y ){
 				self.movementVector.setY(self.boundBox.max.y/2 - closest.distance);
-			} else if(closest) {
 				self.movementVector.setY(0);
 			} else if(self.model.position.y > 0) {
-				self.renderer.removeObject(closest);
 				self.movementVector.setY(-self.model.position.y);
 			} else {
 				self.movementVector.setY(0);
+			}
+
+			if(self.dead){
+				self.movementVector.setLength(0);
 			}
 			
 			var transMatrix = new THREE.Matrix4();

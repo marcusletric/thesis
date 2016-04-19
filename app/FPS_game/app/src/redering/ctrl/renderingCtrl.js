@@ -21,6 +21,7 @@ var renderCtrl = function ($rootScope, $element, renderModelFactory) {
 
         elem.append(renderModel.renderer.domElement);
         renderModel.renderer.setSize(config.dimensions.width,config.dimensions.height);
+        renderModel.renderer.setPixelRatio(.5);
         renderModel.renderer.antialias = true;
         //renderModel.renderer.shadowMapEnabled = true;
         //renderModel.renderer.shadowMapType = THREE.PCFSoftShadowMap;

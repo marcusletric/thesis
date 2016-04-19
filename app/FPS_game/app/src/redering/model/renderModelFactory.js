@@ -15,8 +15,6 @@ angular.module('fps_game.rendering')
             hemiLight.groundColor.setHSL( 0, 0, 0.42 );
             hemiLight.position.set( 0, 500, 0 );
 
-            //
-
             var dirLight = new THREE.DirectionalLight( 0xffffff, 1.3 );
             dirLight.color.setHSL( 0.1, 1, 0.95 );
             dirLight.position.set( 1, 1.75, -0.7 );
@@ -67,16 +65,12 @@ angular.module('fps_game.rendering')
                 self.actualCamera = self.baseCamera;
                 self.addObject(self.baseCamera);
 
-                var initialCamTarget = new THREE.Object3D();
-                initialCamTarget.position.set(0,0,0);
-                self.addObject(initialCamTarget);
-
-                self.actualCamera.position.set(0,100,0);
-                self.actualCamera.lookAt(initialCamTarget);
+                self.actualCamera.position.set(10,1,10);
 
                 self.addObject(hemiLight);
                 self.addObject(dirLight);
 
+                renderer.render(self.scene, self.actualCamera);
 
             }
 			
@@ -93,12 +87,13 @@ angular.module('fps_game.rendering')
                 scene.remove(object);
             };
 
-            self.loadModel = function (modelUrl) {
+            self.loadModel = function (modelUrl,modelName) {
                 var deferred = $q.defer();
                 var loader = new THREE.ColladaLoader(); // init the loader util
                 loader.options.convertUpAxis = true;
 
                 loader.load(modelUrl, function (collada) {
+                    collada.name = modelName || "";
                     var dae = collada.scene;
                     dae.traverse( function( child ) {
                         if( child instanceof THREE.Mesh ) {

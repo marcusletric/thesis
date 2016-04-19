@@ -43,6 +43,13 @@ angular.module('fps_game.network').service('webSocket', function($q,config){
         sendCommand('playerUpdate',arguments);
     };
 
+    this.playerTakeDmg = function(data){
+        var arguments = [
+            data
+        ];
+        sendCommand('playerTakeDmg',arguments);
+    };
+
     this.addPlayer = function(player){
         var arguments = [
             player

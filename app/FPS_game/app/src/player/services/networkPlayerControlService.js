@@ -1,6 +1,7 @@
 angular.module('fps_game.player')
     .service("networkPlayerControlService", function(webSocket, networkGameDriver,$rootScope){
         webSocket.addListener('playerUpdate',updatePlayer);
+        webSocket.addListener('playerTakeDmg',playerTakeDmg);
 
         /**
          * Jatekos parametereinek frissitese
@@ -15,9 +16,12 @@ angular.module('fps_game.player')
                 if(networkPlayer.animation && data.walking != networkPlayer.animation.isPlaying){
                     data.walking ? networkPlayer.animation.play(0) : networkPlayer.animation.stop();
                 }
-            } else if(data.id == networkGameDriver.currentPlayer.getID() && data.sender != networkGameDriver.currentPlayer.getID()){
-                networkGameDriver.currentPlayer.health = data.health;
-                $rootScope.$digest();
+            }
+        }
+
+        function playerTakeDmg(data){
+            if(data.id == networkGameDriver.currentPlayer.getID()){
+                networkGameDriver.currentPlayer.takeDamage(data.dmg);
             }
         }
     });
