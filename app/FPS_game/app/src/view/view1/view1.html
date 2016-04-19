@@ -1,7 +1,7 @@
 <div class="renderer" ng-webgl ng-controller="GameSetupCtrl">
 	<div mouse-control keyboard-control class="hud">
-		<div class="health">HEALTH: {{player.health}}</div>
-		<div class="crosshair">
+		<div ng-if="!loading" class="health"><span>+</span>{{player.health}}</div>
+		<div ng-if="!loading" class="crosshair">
 			<div class="tl"></div>
 			<div class="tr"></div>
 			<div class="bl"></div>

@@ -17,7 +17,7 @@ angular.module('fps_game.rendering')
 
             //
 
-            var dirLight = new THREE.DirectionalLight( 0xffffff, 1.5 );
+            var dirLight = new THREE.DirectionalLight( 0xffffff, 1.3 );
             dirLight.color.setHSL( 0.1, 1, 0.95 );
             dirLight.position.set( 1, 1.75, -0.7 );
             dirLight.position.multiplyScalar( 200 );
