@@ -20,7 +20,7 @@ body {
       .hud {
         display: block;
         @include stretch(0px,0px,0px,0px);
-        .health {
+        .health, .score {
           display: block;
           border: 1px solid rgba(0,0,0,0.3);
           box-shadow: inset 3px 3px 2px rgba(0,0,0,0.2);
@@ -39,6 +39,10 @@ body {
             font-weight: bold;
             color: #ab0016;
           }
+        }
+        .score {
+          right: auto;
+          left: 0;
         }
         .dmgoverlay {
           display: block;

@@ -7,9 +7,10 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		var oldLookAngles = null;
 		var modelLoaded = false;
 
-		self.health = 100;
+		self.health = 0;
+		self.score = 0;
 		self.tookDmg = false;
-		self.dead = false;
+		self.dead = true;
 
 		self.model = new THREE.Object3D();
 		self.renderer = renderer;
@@ -103,15 +104,14 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			var closest = raycaster.intersectObjects( self.renderer.scene.children, true )[0];
 
 			if(closest.object.rootObj && closest.object.rootObj.player && closest.object.rootObj.player.getID() != playerID){
-				webSocket.playerTakeDmg(angular.extend(closest.object.rootObj.player.getNetworkPlayer(),{"dmg": 30}));
+				webSocket.playerTakeDmg(angular.extend(closest.object.rootObj.player.getNetworkPlayer(),{"dmg": 30, "fromPlayer" : self}));
 			}
 		};
 
-		self.takeDamage = function(dmg) {
+		self.takeDamage = function(dmg,fromPlayer) {
 			self.health -= dmg;
 			if(self.health < 1){
-				self.health = 0;
-				self.die();
+				self.die(fromPlayer);
 			}
 			self.tookDmg = true;
 			$rootScope.$digest();
@@ -120,15 +120,21 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			},100);
 		};
 
-		self.die = function(){
+		self.kill = function(){
+			self.score++;
+		};
+
+		self.die = function(fromPlayer){
+			self.health = 0;
 			self.dead = true;
+			webSocket.playerScore(fromPlayer);
 			$timeout(self.respawn,5000);
 		};
 
 		self.respawn = function(){
 			self.dead = false;
 			self.health = 100;
-			self.model.position.set((Math.random()*-50)+25,1,(Math.random()*-50)+25);
+			gameDriver.respawn(self);
 		};
 
 
@@ -148,11 +154,11 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 					}
 				});
 				self.model.player = self;
-				self.renderer.addObject(self.model);
 				self.renderer.addObject(self.lookTarget);
 
 				resetMovementFlag();
 				modelLoaded = true;
+				self.respawn();
 			});
 		}
 		

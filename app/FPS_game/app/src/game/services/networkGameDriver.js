@@ -12,6 +12,8 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
             webSocket.addListener('getAllPlayers',addNetworkPlayers);
             webSocket.addListener('playerConnect',addNetworkPlayer);
             webSocket.addListener('playerDisconnect',removeNetworkPlayer);
+            webSocket.addListener('playerUpdate',updatePlayer);
+            webSocket.addListener('playerTakeDmg',playerTakeDmg);
             webSocket.getAllPlayers();
             self.clientID = clientID;
         });
@@ -63,4 +65,27 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
             delete(self.networkPlayers[player.id]);
         }
     }
+
+    /**
+     * Jatekos parametereinek frissitese
+     *
+     * @param player
+     */
+    function updatePlayer(data){
+        var networkPlayer = networkGameDriver.networkPlayers[data.id];
+        if(networkPlayer){
+            networkPlayer.model.position.set(data.position.x,data.position.y,data.position.z);
+            networkPlayer.model.rotation.set(data.rotation._x,data.rotation._y,data.rotation._z,data.rotation._order);
+            if(networkPlayer.animation && data.walking != networkPlayer.animation.isPlaying){
+                data.walking ? networkPlayer.animation.play(0) : networkPlayer.animation.stop();
+            }
+        }
+    }
+
+    function playerTakeDmg(data){
+        if(data.id == networkGameDriver.currentPlayer.getID()){
+            networkGameDriver.currentPlayer.takeDamage(data.dmg);
+        }
+    }
+
 });

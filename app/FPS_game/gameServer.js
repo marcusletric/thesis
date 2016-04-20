@@ -78,6 +78,13 @@ this.playerTakeDmg = function(player){
     });
 };
 
+this.playerScore = function(player){
+    broadcast({
+        'listener': 'playerScore',
+        'data': player
+    });
+};
+
 this.getNewId = function(listener,conn){
     var responseObj = {
         'listener': listener,

@@ -1,4 +1,4 @@
-angular.module('fps_game.rendering').directive('ngWebgl', function (resourceFetcher, sceneLoader) {
+angular.module('fps_game.rendering').directive('ngWebgl', function (gameDriver) {
     return {
       restrict: 'A',
       controller: "RenderingController",
@@ -16,6 +16,8 @@ angular.module('fps_game.rendering').directive('ngWebgl', function (resourceFetc
             function lockChange() {
                 scope.pointerLock = document.pointerLockElement === element[0] || document.mozPointerLockElement === element[0];
             }
+
+            gameDriver.start(scope);
         }
     };
   });

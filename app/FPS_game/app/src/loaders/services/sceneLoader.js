@@ -142,4 +142,8 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
 			return model.type == replacement.type && model.parent.name.match(replacement.nameRegex)
 		}
 	}
+
+	function getSceneModels(){
+		return sceneModels;
+	}
 });
