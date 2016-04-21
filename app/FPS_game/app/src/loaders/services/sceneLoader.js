@@ -23,7 +23,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
     };
 
     this.loadScene = function(scope,scenePath){
-		var sceneModels = [];
+		sceneModels = [];
 		loadDeferred = $q.defer();
         scope.loading = true;
 
@@ -43,7 +43,9 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
 					var deferred = $q.defer();
 					var constructor = THREE[model.THREE_object];
 					loadedModels.push(deferred.promise);
-					deferred.resolve( new ( constructor.bind.apply( constructor, model.THREE_object_params ) )());
+					var newObj = new ( constructor.bind.apply( constructor, model.THREE_object_params ) )()
+					newObj.name = model.model_name;
+					deferred.resolve( newObj );
 				}
             });
 			
@@ -62,7 +64,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
 							var generatorInstance = self.generators[generator.function];
 							
 							newModel = generatorInstance.generate.apply(this,[modelClone].concat(generator.parameters));
-							
+							newModel.name = loadedModel.name;
 							if(generator.postTransform){
 								helper3D.applyTransformationMatrix(newModel,generator.postTransform);
 							}
@@ -143,7 +145,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
 		}
 	}
 
-	function getSceneModels(){
+	self.getSceneModels = function(){
 		return sceneModels;
 	}
 });

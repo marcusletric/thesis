@@ -14,6 +14,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
             webSocket.addListener('playerDisconnect',removeNetworkPlayer);
             webSocket.addListener('playerUpdate',updatePlayer);
             webSocket.addListener('playerTakeDmg',playerTakeDmg);
+            webSocket.addListener('playerScore',playerScore);
             webSocket.getAllPlayers();
             self.clientID = clientID;
         });
@@ -72,7 +73,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
      * @param player
      */
     function updatePlayer(data){
-        var networkPlayer = networkGameDriver.networkPlayers[data.id];
+        var networkPlayer = self.networkPlayers[data.id];
         if(networkPlayer){
             networkPlayer.model.position.set(data.position.x,data.position.y,data.position.z);
             networkPlayer.model.rotation.set(data.rotation._x,data.rotation._y,data.rotation._z,data.rotation._order);
@@ -83,8 +84,15 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     }
 
     function playerTakeDmg(data){
-        if(data.id == networkGameDriver.currentPlayer.getID()){
-            networkGameDriver.currentPlayer.takeDamage(data.dmg);
+        if(data.id == self.currentPlayer.getID()){
+            self.currentPlayer.takeDamage(data.dmg,data.fromPlayer);
+        }
+    }
+
+    function playerScore(player){
+        if(self.currentPlayer.getID() == player.id){
+            self.currentPlayer.score++;
+            $rootScope.$digest();
         }
     }
 

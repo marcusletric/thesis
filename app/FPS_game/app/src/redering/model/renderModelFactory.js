@@ -80,11 +80,11 @@ angular.module('fps_game.rendering')
 
             self.addObject = function (object) {
                 sceneElements.push(object);
-                scene.add(object);
+                self.scene.add(object);
             };
 
             self.removeObject = function (object) {
-                scene.remove(object);
+                self.scene.remove(object);
             };
 
             self.loadModel = function (modelUrl,modelName) {
@@ -93,7 +93,7 @@ angular.module('fps_game.rendering')
                 loader.options.convertUpAxis = true;
 
                 loader.load(modelUrl, function (collada) {
-                    collada.name = modelName || "";
+                    collada.scene.name = modelName || "";
                     var dae = collada.scene;
                     dae.traverse( function( child ) {
                         if( child instanceof THREE.Mesh ) {

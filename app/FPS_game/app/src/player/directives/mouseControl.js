@@ -1,4 +1,4 @@
-angular.module('fps_game.player').directive('mouseControl', function ($window) {
+angular.module('fps_game.player').directive('mouseControl', function ($window, gameDriver, $timeout) {
     return {
         restrict: 'A',
         link: function(scope){
@@ -6,8 +6,9 @@ angular.module('fps_game.player').directive('mouseControl', function ($window) {
             var middle = {x:canvas.width/2,y:canvas.height/2};
             var currentPos = angular.extend({},middle);
             var mouseSensitivity = 0.7;
+            var respawning = false;
             $($window).on('mousemove',function(event){
-                if(scope.pointerLock && ! scope.loading){
+                if(scope.pointerLock && !scope.loading && scope.player && !scope.player.dead){
                     currentPos.x += event.originalEvent.movementX*mouseSensitivity;
                     if(event.originalEvent.movementY > 0 && currentPos.y < canvas.height ||
                         event.originalEvent.movementY < 0 && currentPos.y > 0 ){
@@ -23,7 +24,17 @@ angular.module('fps_game.player').directive('mouseControl', function ($window) {
             });
 
             $($window).on('click',function(event){
-                scope.player.shoot();
+                if(scope.player){
+                    if(scope.player.dead){
+                        !respawning && $timeout(function(){
+                            gameDriver.respawnPlayer(scope.player);
+                            respawning = false;
+                        },5000);
+                        respawning = true;
+                    } else {
+                        scope.player.shoot();
+                    }
+                }
             });
         }
     }

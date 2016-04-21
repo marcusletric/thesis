@@ -2,6 +2,7 @@
 	<div mouse-control keyboard-control class="hud">
 		<div ng-if="!loading" class="health"><span>+</span>{{player.health}}</div>
 		<div ng-if="!loading" class="score">Score: {{player.score}}</div>
+		<div ng-if="!loading && player.dead" class="respawn-msg">Click to respawn</div>
 		<div class="dmgoverlay" ng-class="{'dmg': player.tookDmg}"></div>
 		<div ng-if="!loading" class="crosshair">
 			<div class="tl"></div>

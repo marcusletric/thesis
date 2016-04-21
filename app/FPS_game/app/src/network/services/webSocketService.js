@@ -54,7 +54,7 @@ angular.module('fps_game.network').service('webSocket', function($q,config){
         var arguments = [
             player
         ];
-        sendCommand('addPlayer',arguments);
+        sendCommand('playerScore',arguments);
     };
 
     this.addPlayer = function(player){

@@ -1,4 +1,4 @@
-angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,gameDriver,webSocket){
+angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,webSocket,eventService){
 	return function (renderer) {
 		var self = this;
 		var playerID = null;
@@ -6,6 +6,8 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		var movementSpeed = 3.2;
 		var oldLookAngles = null;
 		var modelLoaded = false;
+
+		new eventService(self);
 
 		self.health = 0;
 		self.score = 0;
@@ -29,6 +31,14 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			x: 0,
 			y: 0,
 			z: 0
+		};
+
+		self.setID = function(id){
+			playerID = id;
+		};
+
+		self.getID = function(){
+			return playerID;
 		};
 
 		self.lookAt = function (xAngle,yAngle) {
@@ -104,11 +114,15 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			var closest = raycaster.intersectObjects( self.renderer.scene.children, true )[0];
 
 			if(closest.object.rootObj && closest.object.rootObj.player && closest.object.rootObj.player.getID() != playerID){
-				webSocket.playerTakeDmg(angular.extend(closest.object.rootObj.player.getNetworkPlayer(),{"dmg": 30, "fromPlayer" : self}));
+				webSocket.playerTakeDmg(angular.extend(closest.object.rootObj.player.getNetworkPlayer(),{"dmg": 30, "fromPlayer" : self.getNetworkPlayer()}));
 			}
 		};
 
 		self.takeDamage = function(dmg,fromPlayer) {
+			if(self.dead){
+				return;
+			}
+
 			self.health -= dmg;
 			if(self.health < 1){
 				self.die(fromPlayer);
@@ -128,15 +142,8 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			self.health = 0;
 			self.dead = true;
 			webSocket.playerScore(fromPlayer);
-			$timeout(self.respawn,5000);
+			$rootScope.$digest();
 		};
-
-		self.respawn = function(){
-			self.dead = false;
-			self.health = 100;
-			gameDriver.respawn(self);
-		};
-
 
 		init();
 
@@ -150,15 +157,20 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 				self.model.traverse( function( child ) {
 					child.rootObj = self.model;
 					if ( child instanceof THREE.SkinnedMesh ) {
-						self.animation = new THREE.Animation( child, child.geometry.animation );
+						//self.animation = new THREE.Animation( child, child.geometry.animation );
+						self.animation = {
+							isPlaying : false,
+							play: function(){},
+							stop: function(){}
+						}
 					}
 				});
 				self.model.player = self;
 				self.renderer.addObject(self.lookTarget);
+				self.renderer.addObject(self.model);
 
 				resetMovementFlag();
 				modelLoaded = true;
-				self.respawn();
 			});
 		}
 		
@@ -214,11 +226,11 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 
 			closest = raycaster.intersectObjects( nearObjects, true )[0];
 
-			if( closest && closest.distance < self.boundBox.max.y/2 - self.model.position.y ){
+			if( closest && closest.distance - self.boundBox.max.y/2 - self.model.position.y < 0.1 ){
 				self.movementVector.setY(self.boundBox.max.y/2 - closest.distance);
-				self.movementVector.setY(0);
-			} else if(self.model.position.y > 0) {
-				self.movementVector.setY(-self.model.position.y);
+				//self.movementVector.setY(0);
+			} else if(closest && closest.distance - self.boundBox.max.y/2 - self.model.position.y > 0.1) {
+				self.movementVector.setY(self.boundBox.max.y/2 + closest.distance);
 			} else {
 				self.movementVector.setY(0);
 			}
@@ -231,14 +243,5 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			transMatrix.setPosition(self.movementVector);
 			return transMatrix;
 		}
-
-		this.setID = function(id){
-			playerID = id;
-		};
-
-		this.getID = function(){
-			return playerID;
-		};
-
 	};
 });

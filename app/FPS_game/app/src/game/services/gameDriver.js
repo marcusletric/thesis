@@ -1,4 +1,5 @@
 angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetcher, sceneLoader, Player, networkGameDriver) {
+   var self = this;
    var respawnPoints = [];
    var renderScope = null;
 
@@ -22,7 +23,6 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       collectRespawnPoints();
       networkGameDriver.connect().then(function (clientID) {
          addUserPlayer(clientID);
-         networkGameDriver.addCurrentPlayer($scope.player);
       });
    }
 
@@ -35,7 +35,9 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
    function addUserPlayer(clientID) {
       renderScope.player = new Player(app.renderer);
       renderScope.player.setID(clientID);
+      networkGameDriver.addCurrentPlayer(renderScope.player);
       app.renderer.addFrameUpdatedObject(renderScope.player);
+      //renderScope.player.on('die')
    }
 
    function collectRespawnPoints(){
@@ -44,10 +46,12 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       });
    }
 
-   this.respawn = function(player){
-      var randomPoint = respawnPoints[Math.floor(random()*respawnPoints.length)];
-
-      player.model.position = randomPoint.position.clone();
-      player.model.rotation = randomPoint.rotation.clone();
-   };
+   self.respawnPlayer = function(player){
+      var randomPoint = respawnPoints[Math.floor(Math.random()*respawnPoints.length)];
+      player.health = 100;
+      player.dead = false;
+      player.model.position.set( randomPoint.position.x, randomPoint.position.y, randomPoint.position.z);
+      player.model.rotation.set( randomPoint.rotation.x, randomPoint.rotation.y, randomPoint.rotation.z);
+      renderScope.$digest();
+   }
 });

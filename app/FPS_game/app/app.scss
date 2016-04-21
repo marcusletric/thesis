@@ -43,6 +43,12 @@ body {
         .score {
           right: auto;
           left: 0;
+          font-size: 20px;
+          padding-top: 10px;
+        }
+        .respawn-msg {
+          display: block;
+          top: 0;
         }
         .dmgoverlay {
           display: block;
