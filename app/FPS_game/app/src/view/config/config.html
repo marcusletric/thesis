@@ -1,0 +1,22 @@
+<div class="config" game-config>
+    Játékos neve: <input type="text" ng-model="name"/><br>
+    Játékszerver címe: <input type="text" ng-model="serverAddr"/><br>
+    <br>
+    Felbontás: <select ng-model="resolution">
+        <option value="low">Alacsony</option>
+        <option value="med">Közepes</option>
+        <option value="hi">Magas</option>
+    </select><br>
+    <input id="shadows" type="checkbox" ng-model="shadows"><label for="shadows">Áryékok</label><br>
+    <br>
+    <button ng-click="startGame()">Start</button>
+    <div>
+        A játék vezérlése:
+        [W] : előre<br>
+        [S] : hátra<br>
+        [A] : oldalazás balra<br>
+        [D] : oldalazás jobbra<br>
+        [Bal egér klikk] : lövés<br>
+    </div>
+
+</div>

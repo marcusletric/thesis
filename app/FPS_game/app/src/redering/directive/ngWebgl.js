@@ -18,6 +18,10 @@ angular.module('fps_game.rendering').directive('ngWebgl', function (gameDriver) 
             }
 
             gameDriver.start(scope);
+
+            scope.$on('$destroy',function(){
+                scope.player = null;
+            });
         }
     };
   });

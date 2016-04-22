@@ -10,9 +10,9 @@
 		},
 		{
 		  "function": "multiply",
-		  "parameters": [5,2,1],
+		  "parameters": [3,2,1],
 		  "postTransform": [1,0,0, -20,
-							0,1, 0, 0,
+							0,1, 0, 0.1,
 							0,0, 1,25,
 							0,0, 0, 1]
 		},
@@ -55,38 +55,62 @@
 	    "THREE_object": "Object3D",
 		"THREE_object_params" : [],
 		"generators": [
-			{
+		  {
 				"function": "multiply",
 				"parameters": [1,1,1],
-				"postTransform":[-1,0,0, 0,
-								 0,1, 0, 0,
-								 0,0, -1,0,
-								 0,0, 0, 1]
+				"postTransform":{
+				  "position" : [1,0,0],
+				  "rotation" : [0,180,0]
+				}
 			},
 			{
 				"function": "multiply",
 				"parameters": [1,1,1],
-				"postTransform":[-1,0,0, 10,
-								0,1, 0, 0,
-								0,0, -1,0,
-								0,0, 0, 1]
+				"postTransform":{
+				  "position" : [-20,0,25],
+				  "rotation" : [0,90,0]
+				}
 			},
 			{
 				"function": "multiply",
 				"parameters": [1,1,1],
-				"postTransform":[0,0,-1, 10,
-								0,1, 0, 0,
-								1,0, 0,-40,
-								0,0, 0, 1]
+				"postTransform":{
+				  "position" : [10,0,10],
+				  "rotation" : [0,0,0]
+				}
 			},
 			{
 				"function": "multiply",
 				"parameters": [1,1,1],
-				"postTransform":[0,0,1, -40,
-								0,1, 0, 0,
-								-1,0, 0,-40,
-								0,0, 0, 1]
+				"postTransform":{
+				  "position" : [-10,0,-10],
+				  "rotation" : [0,90,0]
+				}
+			},
+		  {
+			"function": "multiply",
+			"parameters": [1,1,1],
+			"postTransform":{
+			  "position" : [20,0,20],
+			  "rotation" : [0,90,0]
 			}
+		  },
+		  {
+			"function": "multiply",
+			"parameters": [1,1,1],
+			"postTransform":{
+			  "position" : [-40,0,0],
+			  "rotation" : [0,180,0]
+			}
+		  },
+		  {
+			"function": "multiply",
+			"parameters": [1,1,1],
+			"postTransform":{
+			  "position" : [-40,0,-40],
+			  "rotation" : [0,180,0]
+			}
+		  }
 		]
 	}
   ]

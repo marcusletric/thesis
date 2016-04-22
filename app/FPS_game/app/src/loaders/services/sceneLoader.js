@@ -36,7 +36,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
             var loadedModels = [];
             sceneModels.forEach(function(model){
 				if(model.model_src){
-					loadedModels.push(app.renderer.loadModel(scenePath + model.model_src, model.model_name));
+					loadedModels.push(app.renderModel.loadModel(scenePath + model.model_src, model.model_name));
 				}
 
 				if(model.THREE_object){
@@ -66,14 +66,14 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
 							newModel = generatorInstance.generate.apply(this,[modelClone].concat(generator.parameters));
 							newModel.name = loadedModel.name;
 							if(generator.postTransform){
-								helper3D.applyTransformationMatrix(newModel,generator.postTransform);
+								helper3D.applyTransformation(newModel,generator.postTransform);
 							}
 
 							appendNearRadius(newModel);
 							readyModels.push(newModel)
 						});
                     } else {
-                        newModel = loadedModel;
+                        var newModel = loadedModel;
 						appendNearRadius(newModel);
 						readyModels.push(newModel)
                     }
@@ -122,7 +122,7 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
 		if(texturesLoaded && modelsLoaded){
 			modelsLoaded.forEach(function(model){
 				sceneModels.push(model);
-				app.renderer.addObject(model);
+				app.renderModel.addObject(model);
 			});
 			renderScope.loading = false;
 			loadDeferred.resolve(true);

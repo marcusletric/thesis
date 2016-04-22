@@ -6,8 +6,8 @@
       <authoring_tool>OpenCOLLADA for 3ds Max;  Version: 1.4.1;  Revision: exported;  Platform: x64;  Configuration: Release_Max2010_static</authoring_tool>
       <source_data>file:///C:/Users/Administrator/Documents/3dsMax/scenes/lakotomb.max</source_data>
     </contributor>
-    <created>2016-04-19T01:43:25</created>
-    <modified>2016-04-19T01:43:25</modified>
+    <created>2016-04-21T19:36:05</created>
+    <modified>2016-04-21T19:36:05</modified>
     <unit name="inch" meter="0.0254"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -244,24 +244,14 @@
     </effect>
     <effect id="_9_-_Default">
       <profile_COMMON>
-        <newparam sid="Sitework_Paving___Surfacing_Pavers_4_jpg-surface">
+        <newparam sid="floor_jpg-surface">
           <surface type="2D">
-            <init_from>Sitework_Paving___Surfacing_Pavers_4_jpg</init_from>
+            <init_from>floor_jpg</init_from>
           </surface>
         </newparam>
-        <newparam sid="Sitework_Paving___Surfacing_Pavers_4_jpg-sampler">
+        <newparam sid="floor_jpg-sampler">
           <sampler2D>
-            <source>Sitework_Paving___Surfacing_Pavers_4_jpg-surface</source>
-          </sampler2D>
-        </newparam>
-        <newparam sid="Sitework_Paving___Surfacing_Pavers_4_bump_jpg-surface">
-          <surface type="2D">
-            <init_from>Sitework_Paving___Surfacing_Pavers_4_bump_jpg</init_from>
-          </surface>
-        </newparam>
-        <newparam sid="Sitework_Paving___Surfacing_Pavers_4_bump_jpg-sampler">
-          <sampler2D>
-            <source>Sitework_Paving___Surfacing_Pavers_4_bump_jpg-surface</source>
+            <source>floor_jpg-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -273,7 +263,7 @@
               <color>0.5882353 0.5882353 0.5882353 1</color>
             </ambient>
             <diffuse>
-              <texture texture="Sitework_Paving___Surfacing_Pavers_4_jpg-sampler" texcoord="CHANNEL1"/>
+              <texture texture="floor_jpg-sampler" texcoord="CHANNEL1"/>
             </diffuse>
             <specular>
               <color>0.9 0.9 0.9 1</color>
@@ -294,7 +284,7 @@
           <extra>
             <technique profile="OpenCOLLADA3dsMax">
               <bump bumptype="HEIGHTFIELD">
-                <texture texture="Sitework_Paving___Surfacing_Pavers_4_bump_jpg-sampler" texcoord="CHANNEL1"/>
+                <texture texture="floor_jpg-sampler" texcoord="CHANNEL1"/>
               </bump>
             </technique>
           </extra>
@@ -361,7 +351,7 @@
           </technique_common>
         </source>
         <source id="geom-Box01-map1">
-          <float_array id="geom-Box01-map1-array" count="108">2.998502 0.9994779 0.00149855 0.001498193 0.9995017 2.998502 2.998502 5.00739e-4 0.00149855 0.001498461 4.99398e-4 0.001573741 0.001498103 0.9994755 0.00149855 2.998502 0.9994993 2.998502 0.001498103 4.98325e-4 0.00149855 0.001498461 0.9995006 0.001566499 0.00149855 0.9994779 0.001498193 0.00149855 5.00739e-4 0.001498193 2.998502 5.2458e-4 0.001498193 2.998502 5.2458e-4 0.001498193 2.998502 0.9995017 0.001498193 0.00149855 0.9994779 0.001498193 2.998502 0.9994755 2.998502 0.001498461 0.9994993 2.998502 0.001498461 5.22166e-4 2.998502 0.001498461 5.22166e-4 2.998502 2.998502 4.98325e-4 2.998502 2.998502 0.9994755 2.998502 0.00149855 4.99398e-4 2.998434 2.998502 4.99398e-4 2.998505 2.998502 0.9995006 2.998498 2.998502 0.9995006 2.998498 0.00149855 0.9995006 2.998426 0.00149855 4.99398e-4 2.998434 0.001498193 0.9995017 2.998502 0.001498193 5.2458e-4 2.998502 2.998502 5.22166e-4 2.998502 2.998502 5.22166e-4 2.998502 0.001498461 4.99398e-4 0.001573741 2.998502 4.99398e-4 0.001502216 2.998502 0.9995006 0.001494974 2.998502 0.9995006 0.001494974 2.998502 5.00739e-4 0.00149855 0.001498103 0.9994755 0.00149855</float_array>
+          <float_array id="geom-Box01-map1-array" count="108">2.998502 0.9994779 9.99033e-5 0.001498193 0.9995017 0.1999001 2.998502 5.00739e-4 9.99033e-5 0.001498461 4.99398e-4 1.04916e-4 0.001498103 0.9994755 9.99033e-5 2.998502 0.9994993 0.1999001 0.001498103 4.98325e-4 9.99033e-5 0.001498461 0.9995006 1.04433e-4 0.00149855 0.9994779 9.98795e-5 0.00149855 5.00739e-4 9.98795e-5 2.998502 5.2458e-4 9.98795e-5 2.998502 5.2458e-4 9.98795e-5 2.998502 0.9995017 9.98795e-5 0.00149855 0.9994779 9.98795e-5 2.998502 0.9994755 0.1999001 0.001498461 0.9994993 0.1999001 0.001498461 5.22166e-4 0.1999001 0.001498461 5.22166e-4 0.1999001 2.998502 4.98325e-4 0.1999001 2.998502 0.9994755 0.1999001 0.00149855 4.99398e-4 0.1998956 2.998502 4.99398e-4 0.1999003 2.998502 0.9995006 0.1998999 2.998502 0.9995006 0.1998999 0.00149855 0.9995006 0.1998951 0.00149855 4.99398e-4 0.1998956 0.001498193 0.9995017 0.1999001 0.001498193 5.2458e-4 0.1999001 2.998502 5.22166e-4 0.1999001 2.998502 5.22166e-4 0.1999001 0.001498461 4.99398e-4 1.04916e-4 2.998502 4.99398e-4 1.00148e-4 2.998502 0.9995006 9.96649e-5 2.998502 0.9995006 9.96649e-5 2.998502 5.00739e-4 9.99033e-5 0.001498103 0.9994755 9.99033e-5</float_array>
           <technique_common>
             <accessor source="#geom-Box01-map1-array" count="36" stride="3">
               <param name="S" type="float"/>
@@ -1596,7 +1586,7 @@
           </technique_common>
         </source>
         <source id="geom-Plane01-map1">
-          <float_array id="geom-Plane01-map1-array" count="75">0.004995465 0.005004637 0.5 2.502497 0.005003444 0.5 5 0.005002251 0.5 7.497501 0.005001057 0.5 9.995004 0.004999864 0.5 0.004995763 2.505003 0.5 2.502498 2.505002 0.5 5 2.505001 0.5 7.497501 2.505 0.5 9.995004 2.504999 0.5 0.004996061 5.005002 0.5 2.502498 5.005002 0.5 5 5.005 0.5 7.497502 5.004999 0.5 9.995004 5.004998 0.5 0.004996359 7.505002 0.5 2.502498 7.505 0.5 5 7.504999 0.5 7.497502 7.504998 0.5 9.995004 7.504997 0.5 0.004996657 10.005 0.5 2.502499 10.005 0.5 5 10.005 0.5 7.497502 10.005 0.5 9.995005 10.005 0.5</float_array>
+          <float_array id="geom-Plane01-map1-array" count="75">0.002497733 0.002499819 0.5 1.251249 0.002499223 0.5 2.5 0.002498627 0.5 3.748751 0.002498031 0.5 4.997502 0.002497435 0.5 0.002497882 1.251251 0.5 1.251249 1.25125 0.5 2.5 1.251249 0.5 3.748751 1.251249 0.5 4.997502 1.251248 0.5 0.002498031 2.500001 0.5 1.251249 2.5 0.5 2.5 2.5 0.5 3.748751 2.5 0.5 4.997502 2.499999 0.5 0.00249818 3.748752 0.5 1.251249 3.748751 0.5 2.5 3.748751 0.5 3.748751 3.74875 0.5 4.997502 3.748749 0.5 0.002498329 4.997502 0.5 1.251249 4.997502 0.5 2.5 4.997501 0.5 3.748751 4.997501 0.5 4.997502 4.9975 0.5</float_array>
           <technique_common>
             <accessor source="#geom-Plane01-map1-array" count="25" stride="3">
               <param name="S" type="float"/>
@@ -1606,7 +1596,7 @@
           </technique_common>
         </source>
         <source id="geom-Plane01-map1-textangents">
-          <float_array id="geom-Plane01-map1-textangents-array" count="75">1 2.34547e-7 0 1 2.51448e-7 0 1 2.59726e-7 0 1 2.51464e-7 0 1 2.5971e-7 0 1 2.51464e-7 0 1 2.42973e-7 0 1 2.51464e-7 0 1 2.51366e-7 0 1 2.51497e-7 0 1 2.34547e-7 0 1 2.42924e-7 0 1 2.93184e-7 0 1 2.42924e-7 0 1 2.17794e-7 0 1 2.68054e-7 0 1 2.34547e-7 0 1 2.513e-7 0 1 2.84807e-7 0 1 2.0104e-7 0 1 2.0104e-7 0 1 2.34547e-7 0 1 2.0104e-7 0 1 3.0156e-7 0 1 3.0156e-7 0</float_array>
+          <float_array id="geom-Plane01-map1-textangents-array" count="75">1 2.68322e-7 0 1 2.51552e-7 0 1 2.43167e-7 0 1 2.51552e-7 0 1 2.43167e-7 0 1 2.51552e-7 0 1 2.59937e-7 0 1 2.51552e-7 0 1 2.51552e-7 0 1 2.51552e-7 0 1 3.01862e-7 0 1 2.43167e-7 0 1 2.09626e-7 0 1 2.59937e-7 0 1 2.85092e-7 0 1 2.68322e-7 0 1 2.51552e-7 0 1 2.01241e-7 0 1 2.34782e-7 0 1 3.01862e-7 0 1 2.01241e-7 0 1 2.34782e-7 0 1 2.01241e-7 0 1 2.01241e-7 0 1 2.51552e-7 0</float_array>
           <technique_common>
             <accessor source="#geom-Plane01-map1-textangents-array" count="25" stride="3">
               <param name="X" type="float"/>
@@ -1616,7 +1606,7 @@
           </technique_common>
         </source>
         <source id="geom-Plane01-map1-texbinormals">
-          <float_array id="geom-Plane01-map1-texbinormals-array" count="75">2.34547e-7 -1 0 2.51448e-7 -1 0 2.59726e-7 -1 0 2.51464e-7 -1 0 2.5971e-7 -1 0 2.51464e-7 -1 0 2.42973e-7 -1 0 2.51464e-7 -1 0 2.51366e-7 -1 0 2.51497e-7 -1 0 2.34547e-7 -1 0 2.42924e-7 -1 0 2.93184e-7 -1 0 2.42924e-7 -1 0 2.17794e-7 -1 0 2.68054e-7 -1 0 2.34547e-7 -1 0 2.513e-7 -1 0 2.84807e-7 -1 0 2.0104e-7 -1 0 2.0104e-7 -1 0 2.34547e-7 -1 0 2.0104e-7 -1 0 3.0156e-7 -1 0 3.0156e-7 -1 0</float_array>
+          <float_array id="geom-Plane01-map1-texbinormals-array" count="75">2.68322e-7 -1 0 2.51552e-7 -1 0 2.43167e-7 -1 0 2.51552e-7 -1 0 2.43167e-7 -1 0 2.51552e-7 -1 0 2.59937e-7 -1 0 2.51552e-7 -1 0 2.51552e-7 -1 0 2.51552e-7 -1 0 3.01862e-7 -1 0 2.43167e-7 -1 0 2.09626e-7 -1 0 2.59937e-7 -1 0 2.85092e-7 -1 0 2.68322e-7 -1 0 2.51552e-7 -1 0 2.01241e-7 -1 0 2.34782e-7 -1 0 3.01862e-7 -1 0 2.01241e-7 -1 0 2.34782e-7 -1 0 2.01241e-7 -1 0 2.01241e-7 -1 0 2.51552e-7 -1 0</float_array>
           <technique_common>
             <accessor source="#geom-Plane01-map1-texbinormals-array" count="25" stride="3">
               <param name="X" type="float"/>
@@ -1730,6 +1720,9 @@
     <image id="concrete_pat_jpg">
       <init_from>./images/0_concrete_pat.jpg</init_from>
     </image>
+    <image id="floor_jpg">
+      <init_from>./images/5_floor.jpg</init_from>
+    </image>
     <image id="Concrete_Cast-In-Place_Panels_Reveal_Smooth_bump_jpg">
       <init_from>./images/4_Concrete.Cast-In-Place.Panels.Reveal.Smooth.bump.jpg</init_from>
     </image>
@@ -1742,12 +1735,6 @@
     <image id="Finishes_Painting_Paint_jpg">
       <init_from>./images/1_Finishes.Painting.Paint.jpg</init_from>
     </image>
-    <image id="Sitework_Paving___Surfacing_Pavers_4_bump_jpg">
-      <init_from>./images/paving_bump.jpg</init_from>
-    </image>
-    <image id="Sitework_Paving___Surfacing_Pavers_4_jpg">
-      <init_from>./images/paving.jpg</init_from>
-    </image>
   </library_images>
   <library_visual_scenes>
     <visual_scene id="MaxScene">
@@ -1755,7 +1742,7 @@
         <instance_light url="#EnvironmentAmbientLight"/>
       </node>
       <node id="node-Box01" name="Box01">
-        <matrix>40.42081 0 0 5.02828e-6 0 -1.75052e-6 -39.94931 223.1697 0 40.04731 -1.74624e-6 -49.96289 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -0.1050555 0 -1.75052e-6 -39.94931 223.1697 0 40.04731 -1.74624e-6 49.29975 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box01">
           <bind_material>
             <technique_common>
@@ -1776,7 +1763,7 @@
         </extra>
       </node>
       <node id="node-Box19" name="Box19">
-        <matrix>40.42081 0 0 84.88371 0 -1.75052e-6 -39.94931 217.651 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 84.77864 0 -1.75052e-6 -39.94931 217.651 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box19">
           <bind_material>
             <technique_common>
@@ -1797,7 +1784,7 @@
         </extra>
       </node>
       <node id="node-Box03" name="Box03">
-        <matrix>40.42081 0 0 408.2502 0 -1.86441e-6 -39.94931 223.1697 0 42.65274 -1.74624e-6 0.6517106 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 408.1452 0 -1.768e-6 -39.94931 223.1697 0 40.4471 -1.74624e-6 -1.904874 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box03">
           <bind_material>
             <technique_common>
@@ -1818,7 +1805,7 @@
         </extra>
       </node>
       <node id="node-Box18" name="Box18">
-        <matrix>40.42081 0 0 242.5249 0 -1.75052e-6 -39.94931 -208.2829 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 242.4198 0 -1.75052e-6 -39.94931 -208.2829 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box18">
           <bind_material>
             <technique_common>
@@ -1839,7 +1826,7 @@
         </extra>
       </node>
       <node id="node-Box05" name="Box05">
-        <matrix>40.42081 0 0 -242.5249 0 -1.75052e-6 -39.94931 -208.2829 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -242.6299 0 -1.75052e-6 -39.94931 -208.2829 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box05">
           <bind_material>
             <technique_common>
@@ -1860,7 +1847,7 @@
         </extra>
       </node>
       <node id="node-Box06" name="Box06">
-        <matrix>40.42081 0 0 -262.7353 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 3.838484 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -262.8403 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box06">
           <bind_material>
             <technique_common>
@@ -1881,7 +1868,7 @@
         </extra>
       </node>
       <node id="node-Box07" name="Box07">
-        <matrix>40.42081 0 0 262.7353 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 3.838484 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 262.6302 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box07">
           <bind_material>
             <technique_common>
@@ -1902,7 +1889,7 @@
         </extra>
       </node>
       <node id="node-Box08" name="Box08">
-        <matrix>40.42081 0 0 177.8516 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 3.838484 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 177.7465 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box08">
           <bind_material>
             <technique_common>
@@ -1923,7 +1910,7 @@
         </extra>
       </node>
       <node id="node-Box09" name="Box09">
-        <matrix>40.42081 0 0 83.31831 0 -1.75052e-6 -39.94931 -37.97784 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 83.21325 0 -1.75052e-6 -39.94931 -37.97784 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box09">
           <bind_material>
             <technique_common>
@@ -1944,7 +1931,7 @@
         </extra>
       </node>
       <node id="node-Box10" name="Box10">
-        <matrix>40.42081 0 0 -83.84469 0 -1.75052e-6 -39.94931 -39.29905 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -83.94975 0 -1.75052e-6 -39.94931 -39.29905 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box10">
           <bind_material>
             <technique_common>
@@ -1965,7 +1952,7 @@
         </extra>
       </node>
       <node id="node-Box11" name="Box11">
-        <matrix>40.42081 0 0 -177.8516 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 3.838484 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -177.9566 0 -1.75052e-6 -39.94931 -93.90614 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box11">
           <bind_material>
             <technique_common>
@@ -1986,7 +1973,7 @@
         </extra>
       </node>
       <node id="node-Box12" name="Box12">
-        <matrix>40.42081 0 0 -242.5249 0 -1.75052e-6 -39.94931 -88.77609 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -242.6299 0 -1.75052e-6 -39.94931 -88.77609 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box12">
           <bind_material>
             <technique_common>
@@ -2007,7 +1994,7 @@
         </extra>
       </node>
       <node id="node-Box13" name="Box13">
-        <matrix>40.42081 0 0 242.5249 0 -1.75052e-6 -39.94931 -88.77609 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 242.4198 0 -1.75052e-6 -39.94931 -88.77609 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box13">
           <bind_material>
             <technique_common>
@@ -2028,7 +2015,7 @@
         </extra>
       </node>
       <node id="node-Box14" name="Box14">
-        <matrix>40.42081 0 0 0.05853768 0 -1.75052e-6 -39.94931 -36.50087 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -0.0465228 0 -1.75052e-6 -39.94931 -36.50087 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box14">
           <bind_material>
             <technique_common>
@@ -2049,7 +2036,7 @@
         </extra>
       </node>
       <node id="node-Box15" name="Box15">
-        <matrix>40.42081 0 0 262.7353 0 -1.75052e-6 -39.94931 220.9994 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 262.6302 0 -1.75052e-6 -39.94931 220.9994 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box15">
           <bind_material>
             <technique_common>
@@ -2070,7 +2057,7 @@
         </extra>
       </node>
       <node id="node-Box16" name="Box16">
-        <matrix>40.42081 0 0 -262.7353 0 -1.75052e-6 -39.94931 217.651 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -262.8403 0 -1.75052e-6 -39.94931 217.651 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box16">
           <bind_material>
             <technique_common>
@@ -2091,7 +2078,7 @@
         </extra>
       </node>
       <node id="node-Box20" name="Box20">
-        <matrix>40.42081 0 0 -84.8837 0 -1.75052e-6 -39.94931 217.651 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -84.98876 0 -1.75052e-6 -39.94931 217.651 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box20">
           <bind_material>
             <technique_common>
@@ -2112,7 +2099,7 @@
         </extra>
       </node>
       <node id="node-Box02" name="Box02">
-        <matrix>40.42081 0 0 -408.2502 0 -1.86441e-6 -39.94931 223.1697 0 42.65274 -1.74624e-6 0.5559421 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -408.3553 0 -1.768e-6 -39.94931 223.1697 0 40.4471 -1.74624e-6 -1.99569 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box02">
           <bind_material>
             <technique_common>
@@ -2133,7 +2120,7 @@
         </extra>
       </node>
       <node id="node-Box04" name="Box04">
-        <matrix>40.42081 0 0 5.02828e-6 0 -1.75052e-6 -39.94931 222.8504 0 40.04731 -1.74624e-6 3.838485 0 0 0 1</matrix>
+        <matrix>40.42081 0 0 -0.1050555 0 -1.75052e-6 -39.94931 222.8504 0 40.04731 -1.74624e-6 -2.423632 0 0 0 1</matrix>
         <instance_geometry url="#geom-Box04">
           <bind_material>
             <technique_common>
@@ -2154,7 +2141,7 @@
         </extra>
       </node>
       <node id="node-Plane01" name="Plane01">
-        <matrix>1 0 0 1.336975 0 1 0 1.672442 0 0 1 -45.78885 0 0 0 1</matrix>
+        <matrix>1 0 0 1.231915 0 1 0 1.672442 0 0 1 -51.47676 0 0 0 1</matrix>
         <instance_geometry url="#geom-Plane01">
           <bind_material>
             <technique_common>
@@ -2175,7 +2162,7 @@
         </extra>
       </node>
       <node id="node-Plane02" name="Plane02">
-        <matrix>1 0 0 1.336975 0 -1 1.50996e-7 1.672441 0 -1.50996e-7 -1 53.8607 0 0 0 1</matrix>
+        <matrix>1 0 0 1.231915 0 -1 1.50996e-7 1.672441 0 -1.50996e-7 -1 44.85545 0 0 0 1</matrix>
         <instance_geometry url="#geom-Plane02">
           <bind_material>
             <technique_common>

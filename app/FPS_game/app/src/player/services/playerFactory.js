@@ -1,99 +1,117 @@
-angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,webSocket,eventService){
+angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,$q,webSocket){
 	return function (renderer) {
 		var self = this;
 		var playerID = null;
 
 		var movementSpeed = 3.2;
-		var oldLookAngles = null;
 		var modelLoaded = false;
+		var shootShatter = { x: 0, y: 0};
 
-		new eventService(self);
+		self.renderer = renderer;
+		self.camera = renderer.baseCamera;
+		self.model = new THREE.Object3D();
+		self.animation = null;
+		self.networkPlayer = false;
 
+		self.lookTarget = new THREE.Object3D();
+		self.movementVector = null;
+		self.initialRotation = {x: 0, y: 0, z: 0};
+		self.lookAngles = { x: 0, y: 0, z: 0};
+		self.movementFlags = { F: 0, B: 0, L: 0, R: 0};
+
+		self.inGame = false;
+		self.name = '';
+		self.dead = true;
 		self.health = 0;
 		self.score = 0;
 		self.tookDmg = false;
-		self.dead = true;
+		self.headShot = false;
+		self.shooting = false;
+		self.hitAreas = [];
 
-		self.model = new THREE.Object3D();
-		self.renderer = renderer;
-		self.camera = renderer.baseCamera;
-		self.lookTarget = new THREE.Object3D();
-		self.animation = null;
-		self.movementFlags = {
-			F: 0,
-			B: 0,
-			L: 0,
-			r: 0
-		};
+		self.modelLoad = $q.defer();
 
-		self.movementVector = null;
-		self.lookAngles = {
-			x: 0,
-			y: 0,
-			z: 0
-		};
 
 		self.setID = function(id){
 			playerID = id;
+			if(self.name == ''){
+				self.name = 'Anonim ' + id;
+			}
 		};
 
 		self.getID = function(){
 			return playerID;
 		};
 
-		self.lookAt = function (xAngle,yAngle) {
-			self.lookAngles.x = xAngle;
-			self.lookAngles.y = yAngle;
-		};
-
 		self.update = function(deltaTime){
+
 			if(!modelLoaded){
 				return;
 			}
+			if(!self.networkPlayer) {
+				var moving = moveUpdated();
 
-			var moving = moveUpdated();
-
-			if(moving) {
-				if(!self.animation.isPlaying){
-					self.animation.play(0);
+				if (moving) {
+					if (!self.animation.isPlaying) {
+						self.animation.play(0);
+					}
+				} else {
+					if (self.animation.isPlaying) {
+						self.animation.stop();
+					}
 				}
-			} else {
-				if(self.animation.isPlaying){
-					self.animation.stop();
+
+				if (self.dead) {
+					self.model.rotation.set(Math.PI / 2, self.lookAngles.y, 0);
+				} else {
+					self.model.applyMatrix(calculateNextMatrix(deltaTime));
+					self.model.rotation.set(0, self.lookAngles.y, 0);
 				}
-			}
-
-			if(self.dead){
-				self.model.rotation.set(Math.PI/2, self.lookAngles.y, 0);
-			} else {
-				self.model.applyMatrix(calculateNextMatrix(deltaTime));
-				self.model.rotation.set(0, self.lookAngles.y, 0);
-			}
-			self.model.updateMatrix();
+				self.model.updateMatrix();
 
 
-			self.camera.position.set(self.model.position.x, self.model.position.y + self.boundBox.max.y, self.model.position.z);
-			self.lookTarget.position.set(
+				self.camera.position.set(self.model.position.x, self.model.position.y + self.boundBox.max.y, self.model.position.z);
+				self.lookTarget.position.set(
 					self.model.position.x + -(Math.sin(self.lookAngles.y)),
 					self.model.position.y + self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x) ),
 					self.model.position.z + -(Math.cos(self.lookAngles.y))
-			);
-			self.camera.lookAt(self.lookTarget.position);
-			webSocket.playerUpdate(self.getNetworkPlayer());
+				);
+				self.camera.lookAt(self.lookTarget.position);
+				webSocket.playerUpdate(self.getNetworkPlayer());
+
+				if(self.camera.fov > app.renderModel.config.camera.fov){
+					self.camera.fov-=0.5;
+					self.camera.updateProjectionMatrix();
+				}
+			}
+
+			self.nozzleFlash.visible = self.shooting;
+			if(self.shooting){
+				self.nozzleFlash.rotation.set(-Math.PI/2,Math.random()*Math.PI*2,0);
+				self.lookAngles.x -= shootShatter.y/2;
+				self.lookAngles.y -= shootShatter.x/2;
+				shootShatter.x = shootShatter.x/2;
+				shootShatter.y = shootShatter.y/2;
+				self.shooting = false;
+			}
 		};
 
 		self.updateLook = function(delta){
-			self.lookAngles.x = delta.y * (Math.PI / 2);
-			self.lookAngles.y = delta.x * Math.PI;
+			self.lookAngles.x = (delta.y * (Math.PI / 2)) + shootShatter.x;
+			self.lookAngles.y = self.initialRotation.y + (delta.x * Math.PI) + shootShatter.y;
 		};
 
 		self.getNetworkPlayer = function(){
 			return {
 				'id' : self.getID(),
+				'name' : self.name,
 				'health' : self.health,
+				'score' :self.score,
 				'position' : self.model.position,
 				'rotation' : self.model.rotation,
-				'walking'  : self.animation && self.animation.isPlaying
+				'walking'  : self.animation && self.animation.isPlaying,
+				'shooting' : self.shooting,
+				'inGame': self.inGame
 			}
 		};
 
@@ -114,8 +132,36 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			var closest = raycaster.intersectObjects( self.renderer.scene.children, true )[0];
 
 			if(closest.object.rootObj && closest.object.rootObj.player && closest.object.rootObj.player.getID() != playerID){
-				webSocket.playerTakeDmg(angular.extend(closest.object.rootObj.player.getNetworkPlayer(),{"dmg": 30, "fromPlayer" : self.getNetworkPlayer()}));
+				var playerHit = closest.object.rootObj.player;
+				function calculateDmg(){
+					playerHit.hitAreas.forEach(function(hitArea){
+						hitArea.visible=true;
+					});
+					var pierced = raycaster.intersectObjects( playerHit.hitAreas, true );
+					playerHit.hitAreas.forEach(function(hitArea){
+						hitArea.visible=false;
+					});
+					var dmg = 0;
+					pierced.forEach(function(hitArea){
+						var dmgValue = hitArea.object.parent.name.split('_')[2];
+						if( dmgValue > dmg){
+							dmg = dmgValue;
+						}
+					});
+					dmg = (dmg == 0 ? 20 : dmg);
+					return dmg;
+				}
+
+				webSocket.playerTakeDmg(angular.extend(closest.object.rootObj.player.getNetworkPlayer(),{"dmg": calculateDmg(), "fromPlayer" : self.getNetworkPlayer()}));
 			}
+
+			shootShatter.x = ((Math.random())-0.5)/180*Math.PI;
+			shootShatter.y = ((Math.random())-0.5)/180*Math.PI;
+			self.camera.fov += 1.5;
+			self.camera.updateProjectionMatrix();
+			self.lookAngles.x += shootShatter.x;
+			self.lookAngles.y += shootShatter.y;
+			self.shooting = true;
 		};
 
 		self.takeDamage = function(dmg,fromPlayer) {
@@ -125,7 +171,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 
 			self.health -= dmg;
 			if(self.health < 1){
-				self.die(fromPlayer);
+				self.die(dmg,fromPlayer);
 			}
 			self.tookDmg = true;
 			$rootScope.$digest();
@@ -138,17 +184,25 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			self.score++;
 		};
 
-		self.die = function(fromPlayer){
+		self.die = function(dmg,fromPlayer){
 			self.health = 0;
 			self.dead = true;
-			webSocket.playerScore(fromPlayer);
+			webSocket.playerScore(dmg,fromPlayer);
 			$rootScope.$digest();
+		};
+
+		self.headShotKill = function(){
+			self.headShot = true;
+			$rootScope.$digest();
+			$timeout(function(){
+				self.headShot = false;
+			},100);
 		};
 
 		init();
 
 		function init(){
-			self.renderer.loadModel('/assets/meshes/player.dae').then(function (playerMesh) {
+			self.modelLoad = self.renderer.loadModel('/assets/meshes/player.dae').then(function (playerMesh) {
 				var boxhelper = new THREE.BoundingBoxHelper( playerMesh, 0xff0000 );
 				boxhelper.update();
 
@@ -157,18 +211,22 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 				self.model.traverse( function( child ) {
 					child.rootObj = self.model;
 					if ( child instanceof THREE.SkinnedMesh ) {
-						//self.animation = new THREE.Animation( child, child.geometry.animation );
-						self.animation = {
-							isPlaying : false,
-							play: function(){},
-							stop: function(){}
-						}
+						self.animation = new THREE.Animation( child, child.geometry.animation );
+					}
+				});
+				self.model.children.forEach(function(child){
+					if(child.name == "nozzleFlash"){
+						self.nozzleFlash = child;
+						child.visible = false;
+					}
+					if(child.name.indexOf("hitArea") > -1){
+						self.hitAreas.push(child);
+						child.visible = false;
 					}
 				});
 				self.model.player = self;
 				self.renderer.addObject(self.lookTarget);
-				self.renderer.addObject(self.model);
-
+				self.model.visible = false;
 				resetMovementFlag();
 				modelLoaded = true;
 			});
@@ -200,7 +258,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			);
 
 			var downRay = new THREE.Ray(
-				new THREE.Vector3(self.model.position.x,self.model.position.y + self.boundBox.max.y/2,self.model.position.z),
+				new THREE.Vector3(self.model.position.x,self.model.position.y + self.boundBox.max.y,self.model.position.z),
 				new THREE.Vector3(0,-1,0).normalize()
 			);
 
@@ -226,11 +284,11 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 
 			closest = raycaster.intersectObjects( nearObjects, true )[0];
 
-			if( closest && closest.distance - self.boundBox.max.y/2 - self.model.position.y < 0.1 ){
-				self.movementVector.setY(self.boundBox.max.y/2 - closest.distance);
+			if( closest && angular.isNumber(closest.distance) && self.model.position.y + self.boundBox.max.y - closest.distance > self.model.position.y + 0.01 ){
+				self.movementVector.setY(self.boundBox.max.y - closest.distance);
 				//self.movementVector.setY(0);
-			} else if(closest && closest.distance - self.boundBox.max.y/2 - self.model.position.y > 0.1) {
-				self.movementVector.setY(self.boundBox.max.y/2 + closest.distance);
+			} else if(closest && self.model.position.y + self.boundBox.max.y - closest.distance < self.model.position.y - 0.01) {
+				self.movementVector.setY(-(self.model.position.y - (self.model.position.y + self.boundBox.max.y - closest.distance)));
 			} else {
 				self.movementVector.setY(0);
 			}

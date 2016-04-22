@@ -1,4 +1,4 @@
-angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetcher, sceneLoader, Player, networkGameDriver) {
+angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetcher, sceneLoader, Player, networkGameDriver, gameConfigModel) {
    var self = this;
    var respawnPoints = [];
    var renderScope = null;
@@ -33,10 +33,10 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
     * @returns {$q.promise}
     */
    function addUserPlayer(clientID) {
-      renderScope.player = new Player(app.renderer);
+      renderScope.player = new Player(app.renderModel);
+      renderScope.player.name = gameConfigModel.name;
       renderScope.player.setID(clientID);
       networkGameDriver.addCurrentPlayer(renderScope.player);
-      app.renderer.addFrameUpdatedObject(renderScope.player);
       //renderScope.player.on('die')
    }
 
@@ -52,6 +52,19 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       player.dead = false;
       player.model.position.set( randomPoint.position.x, randomPoint.position.y, randomPoint.position.z);
       player.model.rotation.set( randomPoint.rotation.x, randomPoint.rotation.y, randomPoint.rotation.z);
+      player.model.updateMatrix();
+      player.initialRotation.y = randomPoint.rotation.y;
+      player.lookAngles.y = player.initialRotation.y;
+      player.update();
+
+      if(!player.inGame){
+         player.modelLoad.then(function(){
+            app.renderModel.addObject(player.model);
+            player.model.visible = true;
+            app.renderModel.addFrameUpdatedObject(player);
+         });
+         player.inGame = true;
+      }
       renderScope.$digest();
    }
 });

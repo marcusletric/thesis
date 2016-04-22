@@ -43,6 +43,7 @@ body {
         bottom: 0px;
         right: 0px; }
         body .app_canvas [ui-view] .renderer .hud {
+          font-family: Verdana;
           display: block;
           position: absolute;
           top: 0px;
@@ -59,7 +60,6 @@ body {
             right: 20px;
             padding: 0 20px 10px 20px;
             font-size: 35px;
-            font-family: Verdana;
             color: #200006;
             border-radius: 4px; }
             body .app_canvas [ui-view] .renderer .hud .health span, body .app_canvas [ui-view] .renderer .hud .score span {
@@ -72,11 +72,27 @@ body {
             left: 0;
             font-size: 20px;
             padding-top: 10px; }
+          body .app_canvas [ui-view] .renderer .hud .headshot-msg {
+            position: absolute;
+            display: block;
+            top: 20%;
+            left: 50%;
+            margin-left: -100px;
+            font-size: 30px;
+            color: rgba(255, 0, 0, 0);
+            -webkit-transition: all 3s;
+            transition: all 3s; }
+            body .app_canvas [ui-view] .renderer .hud .headshot-msg.active {
+              -webkit-transition: all 0s;
+              transition: all 0s;
+              color: red; }
           body .app_canvas [ui-view] .renderer .hud .respawn-msg {
+            position: absolute;
             display: block;
             bottom: 0;
             left: 50%;
-            margin-left: -100px; }
+            margin-left: -80px;
+            font-size: 20px; }
           body .app_canvas [ui-view] .renderer .hud .dmgoverlay {
             display: block;
             position: absolute;
@@ -91,6 +107,14 @@ body {
               -webkit-transition: all 0s;
               transition: all 0s;
               background-color: rgba(255, 0, 0, 0.4); }
+          body .app_canvas [ui-view] .renderer .hud .deadoverlay {
+            display: block;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            bottom: 0px;
+            right: 0px;
+            background-color: rgba(0, 0, 0, 0.4); }
           body .app_canvas [ui-view] .renderer .hud .crosshair {
             display: block;
             position: absolute;

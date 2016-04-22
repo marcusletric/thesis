@@ -6,8 +6,8 @@
       <authoring_tool>OpenCOLLADA for 3ds Max;  Version: 1.4.1;  Revision: exported;  Platform: x64;  Configuration: Release_Max2010_static</authoring_tool>
       <source_data>file:///C:/Users/Administrator/Documents/3dsMax/scenes/enviroment.max</source_data>
     </contributor>
-    <created>2016-04-20T21:28:51</created>
-    <modified>2016-04-20T21:28:51</modified>
+    <created>2016-04-21T19:28:51</created>
+    <modified>2016-04-21T19:28:51</modified>
     <unit name="inch" meter="0.0254"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -130,14 +130,14 @@
     </effect>
     <effect id="_9_-_Default">
       <profile_COMMON>
-        <newparam sid="Sitework_Paving___Surfacing_Pavers_Interlocking_jpg-surface">
+        <newparam sid="street_jpg-surface">
           <surface type="2D">
-            <init_from>Sitework_Paving___Surfacing_Pavers_Interlocking_jpg</init_from>
+            <init_from>street_jpg</init_from>
           </surface>
         </newparam>
-        <newparam sid="Sitework_Paving___Surfacing_Pavers_Interlocking_jpg-sampler">
+        <newparam sid="street_jpg-sampler">
           <sampler2D>
-            <source>Sitework_Paving___Surfacing_Pavers_Interlocking_jpg-surface</source>
+            <source>street_jpg-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -149,7 +149,7 @@
               <color>0.5882353 0.5882353 0.5882353 1</color>
             </ambient>
             <diffuse>
-              <texture texture="Sitework_Paving___Surfacing_Pavers_Interlocking_jpg-sampler" texcoord="CHANNEL1"/>
+              <texture texture="street_jpg-sampler" texcoord="CHANNEL1"/>
             </diffuse>
             <specular>
               <color>0.9 0.9 0.9 1</color>
@@ -170,7 +170,7 @@
           <extra>
             <technique profile="OpenCOLLADA3dsMax">
               <bump bumptype="HEIGHTFIELD">
-                <texture texture="Sitework_Paving___Surfacing_Pavers_Interlocking_jpg-sampler" texcoord="CHANNEL1"/>
+                <texture texture="street_jpg-sampler" texcoord="CHANNEL1"/>
               </bump>
             </technique>
           </extra>
@@ -200,14 +200,14 @@
     </effect>
     <effect id="_8_-_Default">
       <profile_COMMON>
-        <newparam sid="Sitework_Planting_Grass_Short_jpg-surface">
+        <newparam sid="Grass_jpg-surface">
           <surface type="2D">
-            <init_from>Sitework_Planting_Grass_Short_jpg</init_from>
+            <init_from>Grass_jpg</init_from>
           </surface>
         </newparam>
-        <newparam sid="Sitework_Planting_Grass_Short_jpg-sampler">
+        <newparam sid="Grass_jpg-sampler">
           <sampler2D>
-            <source>Sitework_Planting_Grass_Short_jpg-surface</source>
+            <source>Grass_jpg-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -219,7 +219,7 @@
               <color>0.007843138 0.007843138 0.007843138 1</color>
             </ambient>
             <diffuse>
-              <texture texture="Sitework_Planting_Grass_Short_jpg-sampler" texcoord="CHANNEL1"/>
+              <texture texture="Grass_jpg-sampler" texcoord="CHANNEL1"/>
             </diffuse>
             <specular>
               <color>0.9 0.9 0.9 1</color>
@@ -708,7 +708,7 @@
           </technique_common>
         </source>
         <source id="geom-road-map1">
-          <float_array id="geom-road-map1-array" count="114">76.4813 -9.553671 0.002497733 96.12922 -9.553676 0.002497733 115.7771 -9.553684 0.002497733 135.4251 -9.553689 0.002497733 56.83338 -4.682257 0.002497733 76.48131 -4.682261 0.002497733 96.12923 -4.68227 0.002497733 115.7771 -4.682275 0.002497733 135.4251 -4.682283 0.002497733 56.83338 -9.553667 0.002497733 52.98823 -4.682257 0.002497733 52.98823 -9.553662 0.002497733 56.83338 13.81502 0.002497733 52.98824 13.81502 0.002497733 56.83338 19.42332 0.002497733 52.98824 19.42332 0.002497733 56.83339 30.96906 0.002497733 52.98824 30.96906 0.002497733 56.83341 135.425 0.002497733 52.98825 135.4251 0.002497733 39.69293 -4.682252 0.002497733 39.69293 -9.553658 0.002497733 39.69293 13.81502 0.002497733 39.69293 17.7418 0.002497733 39.69294 30.96906 0.002497733 39.69296 135.4251 0.002497733 36.48735 -4.682248 0.002497733 36.48735 -9.553658 0.002497733 36.48735 13.81502 0.6268734 36.48735 17.7418 0.002497733 36.48735 30.96906 4.997502 36.48737 135.4251 0.002497733 22.45716 -4.682248 0.002497733 22.45716 -9.553654 0.002497733 22.45716 13.81503 0.6268734 22.45716 17.7418 0.002497733 -14.42507 -4.682235 0.002497733 -14.42507 -9.553644 0.002497733</float_array>
+          <float_array id="geom-road-map1-array" count="114">33.35617 -11.89823 0.001313807 43.69097 -11.89823 0.001313807 54.02579 -11.89824 0.001313807 64.36059 -11.89824 0.001313807 23.02136 -9.335867 0.001313807 33.35617 -9.335869 0.001313807 43.69098 -9.335873 0.001313807 54.02579 -9.335876 0.001313807 64.36059 -9.33588 0.001313807 23.02136 -11.89823 0.001313807 20.99881 -9.335867 0.001313807 20.99881 -11.89823 0.001313807 23.02136 0.3937006 0.001313807 20.99881 0.3937006 0.001313807 23.02136 3.34367 0.001313807 20.99881 3.34367 0.001313807 23.02137 9.416731 0.001313807 20.99881 9.416731 0.001313807 23.02137 64.3606 0.001313807 20.99882 64.3606 0.001313807 14.00548 -9.335864 0.001313807 14.00548 -11.89822 0.001313807 14.00548 0.3937006 0.001313807 14.00548 2.459187 0.001313807 14.00549 9.416733 0.001313807 14.0055 64.3606 0.001313807 12.31935 -9.335861 0.001313807 12.31935 -11.89822 0.001313807 12.31935 0.3937006 0.3297354 12.31935 2.459187 0.001313807 12.31935 9.416733 2.628686 12.31936 64.3606 0.001313807 4.939465 -9.335861 0.001313807 4.939465 -11.89822 0.001313807 4.93947 0.3937054 0.3297354 4.93947 2.459187 0.001313807 -14.46059 -9.335855 0.001313807 -14.46059 -11.89822 0.001313807</float_array>
           <technique_common>
             <accessor source="#geom-road-map1-array" count="38" stride="3">
               <param name="S" type="float"/>
@@ -718,7 +718,7 @@
           </technique_common>
         </source>
         <source id="geom-road-map1-textangents">
-          <float_array id="geom-road-map1-textangents-array" count="246">1 1.63707e-7 0 1 2.18276e-7 0 1 2.18276e-7 0 1 1.81896e-7 0 1 2.30402e-7 0 1 2.30402e-7 0 1 2.78908e-7 0 1 2.78908e-7 0 1 1.81896e-7 0 1 2.54655e-7 0 1 9.2945e-7 0 1 9.2945e-7 0 1 9.2945e-7 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 2.97424e-6 0 1 2.97424e-6 0 1 2.97424e-6 0 1 0 0 1 0 0 1 0 0 1 8.91912e-7 0 1 8.91912e-7 0 1 8.91912e-7 0 1 8.91912e-7 0 1 8.91912e-7 0 1 8.91912e-7 0 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 0 1 0 0 1 0 0 1 5.09456e-7 0 1 5.09456e-7 0 1 5.09456e-7 0 1 0 0 1 0 0 1 0 0 1 2.03783e-7 0 1 2.03783e-7 0 1 2.03783e-7 0 1 0 0 1 0 0 1 0 0 1 1.938e-7 0 1 1.938e-7 0 1 1.938e-7 0 1 2.7132e-7 0 1 2.7132e-7 0 1 2.7132e-7 0</float_array>
+          <float_array id="geom-road-map1-textangents-array" count="246">1 1.38324e-7 0 1 2.07486e-7 0 1 1.84432e-7 0 1 1.38324e-7 0 1 2.53594e-7 0 1 2.53594e-7 0 1 2.53594e-7 0 1 2.76648e-7 0 1 2.07486e-7 0 1 2.42067e-7 0 1 1.06021e-6 0 1 1.06021e-6 0 1 1.06021e-6 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 1.27174e-6 0 1 1.27174e-6 0 1 1.27174e-6 0 1 1.27174e-6 0 1 1.27174e-6 0 1 1.27174e-6 0 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 -6.75588e-15 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 -5.4047e-14 1 0 0 1 0 0 1 0 0 1 4.84274e-7 0 1 4.84274e-7 0 1 4.84274e-7 0 1 0 0 1 0 0 1 0 0 1 2.90564e-7 0 1 2.90564e-7 0 1 2.90564e-7 0 1 0 0 1 0 0 1 0 0 1 1.8422e-7 0 1 1.8422e-7 0 1 1.8422e-7 0 1 2.57908e-7 0 1 2.57908e-7 0 1 2.57908e-7 0</float_array>
           <technique_common>
             <accessor source="#geom-road-map1-textangents-array" count="82" stride="3">
               <param name="X" type="float"/>
@@ -728,7 +728,7 @@
           </technique_common>
         </source>
         <source id="geom-road-map1-texbinormals">
-          <float_array id="geom-road-map1-texbinormals-array" count="246">1.63707e-7 -1 0 2.18276e-7 -1 0 2.18276e-7 -1 0 1.81896e-7 -1 0 2.30402e-7 -1 0 2.30402e-7 -1 0 2.78908e-7 -1 0 2.78908e-7 -1 0 1.81896e-7 -1 0 2.54655e-7 -1 0 9.2945e-7 -1 0 9.2945e-7 -1 0 9.2945e-7 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 2.97424e-6 -1 0 2.97424e-6 -1 0 2.97424e-6 -1 0 0 -1 0 0 -1 0 0 -1 0 8.91912e-7 -1 0 8.91912e-7 -1 0 8.91912e-7 -1 0 8.91912e-7 -1 0 8.91912e-7 -1 0 8.91912e-7 -1 0 0 -1 -1.56211e-15 0 -1 -1.56211e-15 0 -1 -1.56211e-15 0 -1 0 0 -1 0 0 -1 0 0 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 0 0 -1 0 0 -1 0 0 -1 -1.74759e-14 0 -1 -1.74759e-14 0 -1 -1.74759e-14 0 -1 0 0 -1 0 0 -1 0 0 -1 2.21297e-15 0 -1 2.21297e-15 0 -1 2.21297e-15 5.09456e-7 -1 7.3584e-15 5.09456e-7 -1 7.3584e-15 5.09456e-7 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 7.3584e-15 2.03783e-7 -1 0 2.03783e-7 -1 0 2.03783e-7 -1 0 0 -1 0 0 -1 0 0 -1 0 1.938e-7 -1 0 1.938e-7 -1 0 1.938e-7 -1 0 2.7132e-7 -1 0 2.7132e-7 -1 0 2.7132e-7 -1 0</float_array>
+          <float_array id="geom-road-map1-texbinormals-array" count="246">1.38324e-7 -1 0 2.07486e-7 -1 0 1.84432e-7 -1 0 1.38324e-7 -1 0 2.53594e-7 -1 0 2.53594e-7 -1 0 2.53594e-7 -1 0 2.76648e-7 -1 0 2.07486e-7 -1 0 2.42067e-7 -1 0 1.06021e-6 -1 0 1.06021e-6 -1 0 1.06021e-6 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 1.27174e-6 -1 0 1.27174e-6 -1 0 1.27174e-6 -1 0 1.27174e-6 -1 0 1.27174e-6 -1 0 1.27174e-6 -1 0 0 -1 -1.56211e-15 0 -1 -1.56211e-15 0 -1 -1.56211e-15 0 -1 0 0 -1 0 0 -1 0 0 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 0 0 -1 0 0 -1 0 0 -1 -1.74759e-14 0 -1 -1.74759e-14 0 -1 -1.74759e-14 0 -1 0 0 -1 0 0 -1 0 0 -1 2.21297e-15 0 -1 2.21297e-15 0 -1 2.21297e-15 4.84274e-7 -1 7.3584e-15 4.84274e-7 -1 7.3584e-15 4.84274e-7 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 7.3584e-15 0 -1 7.3584e-15 2.90564e-7 -1 0 2.90564e-7 -1 0 2.90564e-7 -1 0 0 -1 0 0 -1 0 0 -1 0 1.8422e-7 -1 0 1.8422e-7 -1 0 1.8422e-7 -1 0 2.57908e-7 -1 0 2.57908e-7 -1 0 2.57908e-7 -1 0</float_array>
           <technique_common>
             <accessor source="#geom-road-map1-texbinormals-array" count="82" stride="3">
               <param name="X" type="float"/>
@@ -2766,14 +2766,14 @@
     <image id="ground_asphalt_old_07_png">
       <init_from>./images/0_ground_asphalt_old_07.png</init_from>
     </image>
+    <image id="Grass_jpg">
+      <init_from>./images/2_Grass.jpg</init_from>
+    </image>
+    <image id="street_jpg">
+      <init_from>./images/1_street.jpg</init_from>
+    </image>
     <image id="Concrete_Cast-In-Place_Formwork_Holes_jpg">
       <init_from>./images/3_Concrete.Cast-In-Place.Formwork.Holes.jpg</init_from>
-    </image>
-    <image id="Sitework_Paving___Surfacing_Pavers_Interlocking_jpg">
-      <init_from>./images/jarda.jpg</init_from>
-    </image>
-    <image id="Sitework_Planting_Grass_Short_jpg">
-      <init_from>./images/2_Sitework.Planting.Grass.Short.jpg</init_from>
     </image>
   </library_images>
   <library_visual_scenes>

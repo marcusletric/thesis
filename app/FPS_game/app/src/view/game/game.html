@@ -1,0 +1,21 @@
+<div class="renderer" ng-webgl>
+	<div mouse-control keyboard-control class="hud">
+		<div ng-if="!loading" class="health"><span>+</span>{{player.health}}</div>
+		<div ng-if="!loading" class="score">Score: {{player.score}}</div>
+		<div ng-if="!loading && player.dead && !respawning" class="respawn-msg">Click to respawn</div>
+		<div ng-if="!loading && respawning" class="respawn-msg">Respawning in 5 seconds</div>
+		<div ng-if="!loading" ng-class="{'active': player.headShot}" class="headshot-msg">HEAD SHOT!</div>
+		<div ng-if="!loading && showStats" class="stats">
+
+		</div>
+		<div class="dmgoverlay" ng-class="{'dmg': player.tookDmg}"></div>
+		<div class="deadoverlay" ng-if="player.dead"></div>
+		<div ng-if="!loading" class="crosshair">
+			<div class="tl"></div>
+			<div class="tr"></div>
+			<div class="bl"></div>
+			<div class="br"></div>
+		</div>
+		<div class="loader" ng-if="loading">Loading resources</div>
+	</div>
+</div>

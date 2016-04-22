@@ -10,9 +10,9 @@ angular.module('fps_game.rendering')
             self.renderer = null;
             self.baseCamera = null;
 
-            var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.7 );
-            hemiLight.color.setHSL( 0, 0, 0.86 );
-            hemiLight.groundColor.setHSL( 0, 0, 0.42 );
+            var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2.2 );
+            hemiLight.color.setHSL( 0, 0, 1.1);
+            hemiLight.groundColor.setHSL( 0, 0, 0.2 );
             hemiLight.position.set( 0, 500, 0 );
 
             var dirLight = new THREE.DirectionalLight( 0xffffff, 1.3 );
@@ -22,20 +22,18 @@ angular.module('fps_game.rendering')
 
             dirLight.castShadow = true;
 
-            dirLight.shadowMapWidth = 4096;
-            dirLight.shadowMapHeight = 4096;
+            dirLight.shadow.mapSize.width = 4096;
+            dirLight.shadow.mapSize.height = 4096;
 
             var d = 100;
 
-            dirLight.shadowCameraLeft = -d;
-            dirLight.shadowCameraRight = d;
-            dirLight.shadowCameraTop = d;
-            dirLight.shadowCameraBottom = -d;
+            dirLight.shadow.camera.left = -d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = -d;
 
-            dirLight.shadowCameraFar = 1000;
-            dirLight.shadowBias = -0.0003;
-            dirLight.shadowDarkness = 3;
-            //dirLight.shadowCameraVisible = true;
+            dirLight.shadow.camera.far = 1000;
+            dirLight.shadow.bias = -0.0003;
 
             self.actualCamera = null;
             self.sceneElements = [];
@@ -65,7 +63,8 @@ angular.module('fps_game.rendering')
                 self.actualCamera = self.baseCamera;
                 self.addObject(self.baseCamera);
 
-                self.actualCamera.position.set(10,1,10);
+                self.actualCamera.position.set(25,20,25);
+                self.actualCamera.rotation.set(-Math.sin(Math.PI/4)*Math.PI/3,Math.PI/4,Math.cos(Math.PI/4)*Math.PI/4);
 
                 self.addObject(hemiLight);
                 self.addObject(dirLight);
@@ -111,18 +110,18 @@ angular.module('fps_game.rendering')
                 render();
             };
 
-            function render() {
-                requestAnimationFrame(render);
+            self.render = function() {
+                requestAnimationFrame(self.render);
 				var deltaTime = clock.getDelta();
 
-                renderer.render(self.scene, self.actualCamera);
+                renderer && renderer.render(self.scene, self.actualCamera);
 				
 				THREE.AnimationHandler.update(deltaTime);
 				
 				self.updateOnFrame.forEach(function(object){
 					object.update(deltaTime);
 				});
-            }
+            };
 
             $($window).on('resize',function(){
                 self.renderer.setSize(self.config.element.width(),self.config.element.height());

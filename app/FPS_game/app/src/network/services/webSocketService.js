@@ -1,4 +1,4 @@
-angular.module('fps_game.network').service('webSocket', function($q,config){
+angular.module('fps_game.network').service('webSocket', function($q,gameConfigModel){
     var listeners = {};
     var gameServer = null;
     var clientID = token();
@@ -11,22 +11,27 @@ angular.module('fps_game.network').service('webSocket', function($q,config){
     };
 
     this.connect = function(){
-        gameServer =  new WebSocket(config.gameServerAddress);
+        gameServer =  new WebSocket(gameConfigModel.serverAddr);
 
         gameServer.onopen = function (event) {
             var arguments = [
                 "setClientID"
             ];
-            console.log('Connecting to game server on: ' + config.gameServerAddress );
+            console.log('Connecting to game server on: ' + gameConfigModel.serverAddr );
             sendCommand('getNewId',arguments);
         };
 
         gameServer.onmessage = function (event) {
             var data = angular.fromJson(event.data);
-            listeners[data.listener](data.data);
+            listeners[data.listener] && listeners[data.listener](data.data);
         };
 
         return initDeferred.promise;
+    };
+
+    this.close = function(){
+        listeners = {};
+        gameServer && gameServer.close();
     };
 
     this.getAllPlayers = function(){
@@ -50,8 +55,9 @@ angular.module('fps_game.network').service('webSocket', function($q,config){
         sendCommand('playerTakeDmg',arguments);
     };
 
-    this.playerScore = function(player){
+    this.playerScore = function(dmg,player){
         var arguments = [
+            dmg,
             player
         ];
         sendCommand('playerScore',arguments);
@@ -75,7 +81,7 @@ angular.module('fps_game.network').service('webSocket', function($q,config){
             arguments: arguments
         };
 
-        gameServer.send(JSON.stringify(msg));
+        gameServer && gameServer.send(JSON.stringify(msg));
 
     }
 

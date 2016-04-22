@@ -2,11 +2,11 @@ angular.module('fps_game.player').directive('mouseControl', function ($window, g
     return {
         restrict: 'A',
         link: function(scope){
-            var canvas = app.renderer.renderer.domElement;
+            var canvas = app.renderModel.renderer.domElement;
             var middle = {x:canvas.width/2,y:canvas.height/2};
             var currentPos = angular.extend({},middle);
-            var mouseSensitivity = 0.7;
-            var respawning = false;
+            var mouseSensitivity = 0.5;
+            scope.respawning = false;
             $($window).on('mousemove',function(event){
                 if(scope.pointerLock && !scope.loading && scope.player && !scope.player.dead){
                     currentPos.x += event.originalEvent.movementX*mouseSensitivity;
@@ -26,11 +26,12 @@ angular.module('fps_game.player').directive('mouseControl', function ($window, g
             $($window).on('click',function(event){
                 if(scope.player){
                     if(scope.player.dead){
-                        !respawning && $timeout(function(){
+                        !scope.respawning && $timeout(function(){
                             gameDriver.respawnPlayer(scope.player);
-                            respawning = false;
+                            scope.respawning = false;
                         },5000);
-                        respawning = true;
+                        scope.respawning = true;
+                        scope.$digest();
                     } else {
                         scope.player.shoot();
                     }

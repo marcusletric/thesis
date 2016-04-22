@@ -1,6 +1,6 @@
 var ws = require("nodejs-websocket");
 const WSPORT=9001;
-const WSHOST="10.1.14.112";
+const WSHOST="localhost";
 
 var players = {};
 var currID = 10;
@@ -24,12 +24,15 @@ var gameServer = ws.createServer(function (conn) {
         console.log('Player ' + conn.clientID + ' disconnected');
         if(players[conn.clientID]) {
             removePlayer(players[conn.clientID]);
+            delete(connections[conn.clientID]);
         }
     });
 
     conn.on("error", function (code, reason) {
+        console.log('Player ' + conn.clientID + ' disconnected');
         if(players[conn.clientID]) {
             removePlayer(players[conn.clientID]);
+            delete(connections[conn.clientID]);
         }
     });
 
@@ -78,10 +81,10 @@ this.playerTakeDmg = function(player){
     });
 };
 
-this.playerScore = function(player){
+this.playerScore = function(dmg,player){
     broadcast({
         'listener': 'playerScore',
-        'data': player
+        'data': {'dmg': dmg, 'player': player}
     });
 };
 

@@ -14,6 +14,9 @@ angular.module('fps_game.player').directive('keyboardControl', function () {
 				  case 'd' :
 				  case 'D' : scope.player.movementFlags.R=1; break;
 			  }
+			  if(event.keyCode == 9){
+				  scope.showstats = true;
+			  }
 		  });
 		  
 		  $('body').on('keyup',function(){
@@ -27,6 +30,9 @@ angular.module('fps_game.player').directive('keyboardControl', function () {
 				  case 'S' : scope.player.movementFlags.B=0; break;
 				  case 'd' :
 				  case 'D' : scope.player.movementFlags.R=0; break;
+			  }
+			  if(event.keyCode == 9){
+				  scope.showstats = false;
 			  }
 		  });
 	  }

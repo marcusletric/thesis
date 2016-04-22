@@ -1,11 +1,11 @@
 angular.module('fps_game.game').service('networkGameDriver', function ($rootScope, webSocket, Player) {
     var self = this;
 
-    this.currentPlayer = null;
-    this.networkPlayers = [];
-    this.clientID = null;
-
     this.connect = function(){
+        self.currentPlayer = null;
+        self.networkPlayers = [];
+        self.clientID = null;
+
         var promise = webSocket.connect();
 
         promise.then(function(clientID){
@@ -45,10 +45,15 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
      */
     function addNetworkPlayer(player){
         if(player.id != self.clientID) {
-            var newPlayer = new Player(app.renderer);
+            var newPlayer = new Player(app.renderModel);
+            newPlayer.networkPlayer = true;
             newPlayer.setID(player.id);
-            newPlayer.model.position.set(player.position.x,player.position.y,player.position.z);
-            newPlayer.model.rotation.set(player.rotation._x,player.rotation._y,player.rotation._z,player.rotation._order);
+            newPlayer.modelLoad.then(function(){
+                newPlayer.model.position.set(player.position.x,player.position.y,player.position.z);
+                newPlayer.model.rotation.set(player.rotation._x,player.rotation._y,player.rotation._z,player.rotation._order);
+                app.renderModel.addObject(newPlayer.model);
+                app.renderModel.addFrameUpdatedObject(newPlayer);
+            });
             self.networkPlayers[player.id] = newPlayer;
 
             console.log('Player ' + player.id + ' connected');
@@ -62,7 +67,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
      */
     function removeNetworkPlayer(player){
         if(self.networkPlayers[player.id]){
-            app.renderer.removeObject(self.networkPlayers[player.id].model);
+            app.renderModel.removeObject(self.networkPlayers[player.id].model);
             delete(self.networkPlayers[player.id]);
         }
     }
@@ -77,8 +82,18 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         if(networkPlayer){
             networkPlayer.model.position.set(data.position.x,data.position.y,data.position.z);
             networkPlayer.model.rotation.set(data.rotation._x,data.rotation._y,data.rotation._z,data.rotation._order);
+            networkPlayer.name = data.name;
+            networkPlayer.health = data.health;
+            networkPlayer.score = data.score;
+            if( data.shooting ){
+                networkPlayer.shooting = data.shooting;
+            }
             if(networkPlayer.animation && data.walking != networkPlayer.animation.isPlaying){
                 data.walking ? networkPlayer.animation.play(0) : networkPlayer.animation.stop();
+            }
+
+            if(data.inGame){
+                networkPlayer.model.visible = true;
             }
         }
     }
@@ -89,9 +104,12 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         }
     }
 
-    function playerScore(player){
-        if(self.currentPlayer.getID() == player.id){
+    function playerScore(data){
+        if(self.currentPlayer.getID() == data.player.id){
             self.currentPlayer.score++;
+            if(data.dmg == 100){
+                self.currentPlayer.headShotKill();
+            }
             $rootScope.$digest();
         }
     }

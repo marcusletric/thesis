@@ -41738,7 +41738,7 @@ angular.module('myApp.view1', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/view1', {
-    templateUrl: '/app/src/view/view1/view1.html',
+    templateUrl: '/app/src/view/game/view1.html',
     controller: 'View1Ctrl'
   });
 }])

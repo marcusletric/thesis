@@ -1,5 +1,5 @@
 var app = {};
-app.renderer = null;
+app.renderModel = null;
 
 angular.module('fps_game', [
   'ui.router',
@@ -11,21 +11,17 @@ angular.module('fps_game', [
   'fps_game.network',
   'fps_game.common'
 ]).config(['$stateProvider', function($stateProvider) {
-        $stateProvider.state('home', {
-            url: "/",
-            templateUrl: 'src/view/view1/view1.html'
+        $stateProvider.state('config', {
+            url: "/config",
+            templateUrl: 'src/view/config/config.html'
+        });
+        $stateProvider.state('game', {
+            url: "/game",
+            templateUrl: 'src/view/game/game.html'
         });
     }])
-.run(function($state){
-        if(!$state.current.name || $state.current.name == ''){
-            $state.go('home');
-}});
-
-angular.module('fps_game').constant('config',
-    {
-        gameServerAddress : 'ws://10.1.14.112:9001',
-        rendering: {
-
+.run(function($state,gameConfigModel){
+        if(!$state.current.name || $state.current.name == '' || !gameConfigModel.setup){
+            $state.go('config', {}, { reload: true });
         }
-    }
-);
+    });

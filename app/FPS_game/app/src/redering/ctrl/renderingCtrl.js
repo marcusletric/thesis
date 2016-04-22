@@ -1,4 +1,4 @@
-var renderCtrl = function ($rootScope, $element, renderModelFactory) {
+angular.module('fps_game.rendering').controller('RenderingController', function ($rootScope, $element, renderModelFactory, gameConfigModel) {
 
     var elem = $($element);
     var config = {
@@ -19,12 +19,20 @@ var renderCtrl = function ($rootScope, $element, renderModelFactory) {
 
     var init = function () {
 
+        var pixelRatio = 0.5;
+
+        switch (gameConfigModel.resolution){
+            case 'low' : pixelRatio = 0.5; break;
+            case 'med' : pixelRatio = 0.7; break;
+            case 'hi' : pixelRatio = 1; break;
+        }
+
         elem.append(renderModel.renderer.domElement);
         renderModel.renderer.setSize(config.dimensions.width,config.dimensions.height);
-        renderModel.renderer.setPixelRatio(.5);
+        renderModel.renderer.setPixelRatio(pixelRatio);
         renderModel.renderer.antialias = true;
-        //renderModel.renderer.shadowMapEnabled = true;
-        //renderModel.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+        renderModel.renderer.shadowMapEnabled = gameConfigModel.shadows;
+        renderModel.renderer.shadowMapType = THREE.PCFSoftShadowMap;
         renderModel.renderer.physicallyCorrectLights = true;
         renderModel.renderer.gammaInput = true;
         renderModel.renderer.gammaOutput = true;
@@ -32,10 +40,8 @@ var renderCtrl = function ($rootScope, $element, renderModelFactory) {
         renderModel.renderer.shadowMap.cullFace = THREE.CullFaceBack;
 
         renderModel.startRender();
-        app.renderer = renderModel;
+        app.renderModel = renderModel;
     };
 
     init();
-};
-
-angular.module('fps_game.rendering').controller('RenderingController', ['$rootScope', '$element', 'renderModelFactory', renderCtrl]);
+});
