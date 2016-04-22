@@ -39,7 +39,7 @@ var gameServer = ws.createServer(function (conn) {
     currID++;
 }).listen(WSPORT,WSHOST);
 
-console.log("Gameserver started on port " + WSPORT);
+console.log("Gameserver started on " + WSHOST + ":" + WSPORT);
 
 
 this.addPlayer = function(player) {
