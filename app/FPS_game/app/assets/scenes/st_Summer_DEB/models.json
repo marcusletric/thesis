@@ -43,6 +43,10 @@
 	  ]
     },
 	{
+	  "model_name": "player",
+	  "model_src": "/players/player.dae"
+	},
+	{
 	  "model_name": "kornyezet",
 	  "model_src": "/models/enviroment.dae"
 	},

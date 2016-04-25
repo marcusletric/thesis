@@ -5,27 +5,40 @@ angular.module('fps_game.game').directive('gameStats', function (networkGameDriv
         scope: {userPlayer : "="},
         link: function(scope){
 
-            webSocket.addListener('getAllPlayers',function(){$timeout(refresh);});
+            function refreshValues(){
+                scope.game = networkGameDriver.networkGame;
+                scope.now = (new Date()).getTime();
+                $timeout(refreshValues,1000);
+            }
+
+            refreshValues();
+
+            webSocket.addListener('getPlayers',function(){$timeout(refresh);});
             webSocket.addListener('playerTakeDmg',function(){$timeout(refresh);});
             webSocket.addListener('playerScore',function(){$timeout(refresh);});
-            webSocket.addListener('gameUpdate',function(){$timeout(refresh);});
+            webSocket.addListener('startGame',function(){$timeout(refresh);});
+            webSocket.addListener('updateGame',function(){$timeout(refresh);});
+            webSocket.addListener('endGame',function(){$timeout(refresh);});
 
             function refresh(event){
-                $cookies.putObject('Player',networkGameDriver.currentPlayer.getNetworkPlayer());
-                //scope.players = networkGameDriver.networkPlayers;
                 scope.game = networkGameDriver.networkGame;
                 scope.activePlayers = [];
+                scope.queue = [];
 
-                if(networkGameDriver.networkGame && networkGameDriver.networkGame.activePlayers) {
-                    networkGameDriver.networkGame.activePlayers.forEach(function(activePlayer){
-                        !!networkGameDriver.networkPlayers[activePlayer.id] && scope.activePlayers.push(networkGameDriver.networkPlayers[activePlayer.id]);
-                    });
-                    if(networkGameDriver.currentPlayer){
-
+                for(var id in networkGameDriver.networkPlayers){
+                    if(networkGameDriver.isPlayerInActiveGame(networkGameDriver.networkPlayers[id])){
+                        scope.activePlayers.push(networkGameDriver.networkPlayers[id]);
+                    } else {
+                        scope.queue.push(networkGameDriver.networkPlayers[id]);
                     }
                 }
 
-                scope.queue = [];
+                if(networkGameDriver.isPlayerInActiveGame(networkGameDriver.currentPlayer)){
+                    scope.activePlayers.push(networkGameDriver.currentPlayer);
+                } else {
+                    scope.queue.push(networkGameDriver.currentPlayer);
+                }
+
 
                 if(!networkGameDriver.networkGame){
                     scope.queue = networkGameDriver.networkPlayers;
@@ -36,6 +49,7 @@ angular.module('fps_game.game').directive('gameStats', function (networkGameDriv
                 }
 
                 networkGameDriver.currentPlayer.refreshPing();
+                $cookies.putObject('Player',networkGameDriver.currentPlayer.getNetworkPlayer());
                 event && scope.$digest();
             }
 

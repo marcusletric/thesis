@@ -8,9 +8,10 @@ var GameInstance = function(gameID){
     self.activePlayers = [];
 
 
-    self.startGame = function(){
-        self.running = true;
+    self.startGame = function(timestamp,gameTime){
+        self.running = timestamp;
         self.queueing = false;
+        self.gameTime = timestamp + gameTime;
         self.activePlayers = [];
         self.activePlayers = self.activePlayers.concat(self.playerQueue);
     };
@@ -29,7 +30,7 @@ var GameInstance = function(gameID){
     self.startQueueing = function(timestamp,queueTime){
         self.playerQueue = [];
         self.queueing = timestamp;
-        self.queueTime = queueTime;
+        self.queueTime = timestamp + queueTime;
     };
 
     self.queue = function(player){

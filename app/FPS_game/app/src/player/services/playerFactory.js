@@ -1,9 +1,9 @@
 angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,$q,webSocket){
-	return function (renderer) {
+	return function (renderer,model) {
 		var self = this;
 		var playerID = null;
 		var gameID = null;
-		var pingStart = new Date().getTime();
+		self.pingStart = new Date().getTime();
 
 		var movementSpeed = 3.2;
 		var modelLoaded = false;
@@ -11,11 +11,12 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 
 		self.renderer = renderer;
 		self.camera = renderer.baseCamera;
-		self.model = new THREE.Object3D();
+		self.model = model;
 		self.animation = null;
 		self.networkPlayer = false;
 		self.ready = false;
 		self.active = true;
+		self.ping = 0;
 
 		self.lookTarget = new THREE.Object3D();
 		self.movementVector = null;
@@ -33,7 +34,6 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		self.shooting = false;
 		self.hitAreas = [];
 
-		self.modelLoad = $q.defer();
 
 		self.setReadyState = function(readiness){
 			self.ready = readiness;
@@ -61,20 +61,19 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 
 
 		self.refreshPing = function(){
-			pingStart = new Date().getTime();
-			webSocket.ping();
+			self.pingStart = new Date().getTime();
+			self.ping = 0;
+			webSocket.ping(self.getNetworkPlayer());
 		};
 
-		function pong(){
-			self.ping = (new Date().getTime()) - pingStart;
-			webSocket.playerUpdate(self.getNetworkPlayer());
-		}
+		self.pong = function(player){
+			if(player.id == self.getID()){
+				self.ping = (new Date().getTime()) - self.pingStart;
+				webSocket.playerUpdate(self.getNetworkPlayer());
+			}
+		};
 
 		self.update = function(deltaTime){
-
-			if(!modelLoaded){
-				return;
-			}
 			if(!self.networkPlayer) {
 				var moving = moveUpdated();
 
@@ -231,38 +230,46 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			},100);
 		};
 
+		self.addPlayerModel = function(){
+			self.renderer.addObject(self.model);
+			self.model.visible = true;
+			self.renderer.addFrameUpdatedObject(self);
+			self.inGame = true;
+		};
+
 		init();
 
 		function init(){
-			webSocket.addListener('pong',pong());
-			self.modelLoad = self.renderer.loadModel('/assets/meshes/player.dae').then(function (playerMesh) {
-				var boxhelper = new THREE.BoundingBoxHelper( playerMesh, 0xff0000 );
-				boxhelper.update();
+			webSocket.addListener('pong',self.pong);
 
-				self.boundBox = boxhelper.box;
-				self.model = playerMesh;
-				self.model.traverse( function( child ) {
-					child.rootObj = self.model;
-					if ( child instanceof THREE.SkinnedMesh ) {
-						self.animation = new THREE.Animation( child, child.geometry.animation );
-					}
-				});
-				self.model.children.forEach(function(child){
-					if(child.name == "nozzleFlash"){
-						self.nozzleFlash = child;
-						child.visible = false;
-					}
-					if(child.name.indexOf("hitArea") > -1){
-						self.hitAreas.push(child);
-						child.visible = false;
-					}
-				});
-				self.model.player = self;
-				self.renderer.addObject(self.lookTarget);
-				self.model.visible = false;
-				resetMovementFlag();
-				modelLoaded = true;
+			var boxhelper = new THREE.BoundingBoxHelper( self.model, 0xff0000 );
+			boxhelper.update();
+
+			self.boundBox = boxhelper.box;
+
+			self.model.traverse( function( child ) {
+				child.rootObj = self.model;
+				if ( child instanceof THREE.SkinnedMesh ) {
+					self.animation = new THREE.Animation( child, child.geometry.animation );
+				}
 			});
+
+			self.model.children.forEach(function(child){
+				if(child.name == "nozzleFlash"){
+					self.nozzleFlash = child;
+					child.visible = false;
+				}
+				if(child.name.indexOf("hitArea") > -1){
+					self.hitAreas.push(child);
+					child.visible = false;
+				}
+			});
+
+			self.model.player = self;
+			self.renderer.addObject(self.lookTarget);
+			self.model.visible = false;
+			resetMovementFlag();
+			modelLoaded = true;
 		}
 		
 		function resetMovementFlag(){

@@ -2,8 +2,9 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
    var self = this;
    var respawnPoints = [];
    var renderScope = null;
+   var playerModel = null;
 
-   this.init = function(scope){
+   self.init = function(scope){
       renderScope = scope;
       // A forrasok gyokerkonyvtara
       var resRoot = '/assets';
@@ -16,7 +17,18 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       });
    };
 
-   this.start = function(game){
+   /**
+    * Jatek inicializalasa
+    */
+   function initGame() {
+      playerModel = sceneLoader.getSceneModels("player")[0];
+      respawnPoints = sceneLoader.getSceneModels("spawnPoint");
+      networkGameDriver.connect().then(function (networkPlayerInstance) {
+         addUserPlayer(networkPlayerInstance);
+      });
+   }
+
+   self.startGame = function(game){
       if(game.activePlayers.find(function(activePlayer){
             return activePlayer.id == networkGameDriver.currentPlayer.getID();
           })){
@@ -26,47 +38,35 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       networkGameDriver.networkGame = game;
    };
 
-   webSocket.addListener('startGame',self.start);
+   self.endGame = function(game){
+
+   };
+
+
+   webSocket.addListener('startGame',self.startGame);
+   webSocket.addListener('endGame',self.endGame);
 
    /**
-    * Jatek inicializalasa
-    */
-   function initGame() {
-      collectRespawnPoints();
-      networkGameDriver.connect().then(function (networkPlayer) {
-         addUserPlayer(networkPlayer);
-      });
-   }
-
-   /**
-    * Aktualis jatekos hozzaadasa
+    * Aktualis jatekos hozzaadasa a jatekhoz
     *
     * @param networkPlayer Játékos objektum
     * @returns {$q.promise}
     */
    function addUserPlayer(networkPlayer) {
-      renderScope.player = new Player(app.renderModel);
+      renderScope.player = new Player(app.renderModel,playerModel);
       renderScope.player.name = networkPlayer.name || gameConfigModel.playerName;
       renderScope.player.setID(networkPlayer.id);
 
       networkGameDriver.addCurrentPlayer(renderScope.player);
 
-      if(networkPlayer.position && networkPlayer.rotation && networkPlayer.inGame){
-         renderScope.player.modelLoad.then(function(){
-            app.renderModel.addObject(renderScope.player.model);
-            renderScope.player.model.visible = true;
+      if(networkPlayer.inGame){
+            renderScope.player.addPlayerModel();
             app.renderModel.addFrameUpdatedObject(renderScope.player);
             networkGameDriver.updatePlayerAttrs(renderScope.player,networkPlayer);
-         });
       }
 
       webSocket.playerUpdate(networkGameDriver.currentPlayer.getNetworkPlayer());
-   }
-
-   function collectRespawnPoints(){
-      respawnPoints = sceneLoader.getSceneModels().filter(function(model){
-         return model.name == "spawnPoint";
-      });
+      webSocket.updateGame();
    }
 
    self.respawnPlayer = function(player){
@@ -81,12 +81,7 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       player.update();
 
       if(!player.inGame){
-         player.modelLoad.then(function(){
-            app.renderModel.addObject(player.model);
-            player.model.visible = true;
-            app.renderModel.addFrameUpdatedObject(player);
-         });
-         player.inGame = true;
+
       }
       renderScope.$digest();
    }

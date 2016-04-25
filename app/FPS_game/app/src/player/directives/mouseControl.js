@@ -15,7 +15,7 @@ angular.module('fps_game.player').directive('mouseControl', function ($window, g
                 document.webkitExitPointerLock;
 
             element[0].onclick = function() {
-               if(!scope.player.dead) {
+               if(scope.player && !scope.player.dead) {
                    element[0].requestPointerLock();
                }
             };

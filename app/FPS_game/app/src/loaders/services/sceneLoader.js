@@ -145,7 +145,9 @@ angular.module('fps_game.loaders').service('sceneLoader', function ($http, $q, m
 		}
 	}
 
-	self.getSceneModels = function(){
-		return sceneModels;
+	self.getSceneModels = function(name){
+		return sceneModels.filter(function(model){
+			return !name || model.name == name;
+		});
 	}
 });

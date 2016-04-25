@@ -56,7 +56,7 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
 
         gameServer.onmessage = function (event) {
             var data = angular.fromJson(event.data);
-            listeners[data.listener] && listeners[data.listener].forEach(function(listener){
+            listeners[data.listener] && listeners[data.listener].length > 0 && listeners[data.listener].forEach(function(listener){
                 listener(data.data);
             });
         };
@@ -77,19 +77,16 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
         gameServer && gameServer.close();
     };
 
-    this.getPlayerQueue = function(){
-        sendCommand('getQueue',null);
+    this.updateGame = function(){
+        sendCommand('updateGame',null);
     };
 
-    this.ping = function(){
-        sendCommand('ping',null);
+    this.ping = function(player){
+        sendCommand('ping',[player]);
     };
 
-    this.getAllPlayers = function(){
-        var arguments = [
-            "getAllPlayers"
-        ];
-        sendCommand('getPlayers',arguments);
+    this.refreshPlayers = function(){
+        sendCommand('getPlayers',null);
     };
 
     this.playerUpdate = function(player){
@@ -144,7 +141,8 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
 
     function sendCommand(command,arguments) {
         if(!alive){
-            console.log('connections issues');
+            console.log('Connection lost, trying to reconnect');
+            self.reconnect();
             return false;
         }
         // Construct a msg object containing the data the server needs to process the message from the chat client.

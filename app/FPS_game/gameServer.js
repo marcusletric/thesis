@@ -8,7 +8,7 @@ var queueTimer;
 var queueTime=12000;
 
 var gameTimer;
-var gameTime=300000;
+var gameTime=30000;
 
 var players = {};
 var playerIncrementID = 10;
@@ -56,20 +56,6 @@ var gameServer = ws.createServer(function (conn) {
 
 console.log("Gameserver started on " + WSHOST + ":" + WSPORT);
 
-this.getGameState = function(){
-    return {
-        'listener': 'getGameState',
-        'data': activeGame.state
-    };
-};
-
-this.getQueue = function(){
-    return {
-        'listener': 'getQueue',
-        'data': activeGame.playerQueue
-    };
-};
-
 this.addPlayer = function(player) {
     if(!player || !player.id || typeof(player.id) != "number"){
         return false;
@@ -79,14 +65,14 @@ this.addPlayer = function(player) {
     player.gameID = gameIncrementID;
     players[player.id] = player;
 
-    broadcast(self.getPlayers('getAllPlayers'));
+    broadcast(self.getPlayers());
 };
 
 function removePlayer(player){
     players[player.id].active = false;
     activeGame.unQueue(player);
 
-    broadcast(self.getPlayers('getAllPlayers'));
+    broadcast(self.getPlayers());
 }
 
 this.playerReadyStateChange = function(player){
@@ -99,34 +85,40 @@ this.playerReadyStateChange = function(player){
         'data': player
     });
 
-    broadcast(self.getPlayers('getAllPlayers'));
+    broadcast(self.getPlayers());
 };
 
 function startQueue(){
     activeGame = new Game(gameIncrementID);
-    activeGame.startQueueing(new Date().getTime().toString(),queueTime);
+    activeGame.startQueueing((new Date()).getTime(),queueTime);
     console.log('Queueing players');
     for(key in players){
         if(players[key] && players[key].ready){
             activeGame.queue(players[key]);
         }
     }
+    broadcast({
+        'listener': 'updateGame',
+        'data': activeGame
+    });
+    queueTimer = setTimeout(startGame,queueTime);
 }
 
 function startGame(){
     console.log('Starting game...');
-    activeGame.startGame();
+    activeGame.startGame((new Date()).getTime(),gameTime);
     gameTimer = setTimeout(endGame,gameTime);
     broadcast({
         'listener': 'startGame',
         'data': activeGame
     });
+    broadcast(self.getPlayers());
+    gameIncrementID++;
 }
 
 function endGame(){
     console.log('Game ended');
     activeGame.endGame();
-    gameIncrementID++;
     setTimeout(startQueue,10000);
     broadcast({
         'listener': 'startGame',
@@ -134,7 +126,7 @@ function endGame(){
     });
 }
 
-this.getPlayers = function(listener){
+this.getPlayers = function(){
     var activePlayers = {};
     for(id in players){
         if(players[id].active) {
@@ -145,7 +137,7 @@ this.getPlayers = function(listener){
         }
     }
     return {
-        'listener': listener,
+        'listener': 'getPlayers',
         'data': activePlayers
     };
 };
@@ -168,6 +160,13 @@ this.playerUpdate = function(player){
     });
 };
 
+this.updateGame = function(){
+    broadcast({
+        'listener': 'updateGame',
+        'data': activeGame
+    });
+};
+
 this.playerTakeDmg = function(player){
     broadcast({
         'listener': 'playerTakeDmg',
@@ -175,8 +174,11 @@ this.playerTakeDmg = function(player){
     });
 };
 
-this.ping = function(){
-    return 'pong';
+this.ping = function(player){
+    return {
+        'listener': 'pong',
+        'data': player
+    };
 };
 
 this.playerScore = function(dmg,player){
@@ -252,5 +254,3 @@ function broadcast(data){
 }
 
 startQueue();
-
-queueTimer = setTimeout(startGame,queueTime);

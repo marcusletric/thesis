@@ -1,5 +1,7 @@
-angular.module('fps_game.game').service('networkGameDriver', function ($rootScope, webSocket, Player) {
+angular.module('fps_game.game').service('networkGameDriver', function ($rootScope, webSocket, Player, sceneLoader) {
     var self = this;
+    var playerModel = null;
+
 
     self.networkGame = null;
 
@@ -30,6 +32,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     };
 
     self.connect = function(){
+        playerModel = sceneLoader.getSceneModels("player")[0];
         self.currentPlayer = null;
         self.networkPlayers = {};
         self.clientID = null;
@@ -37,7 +40,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         var promise = webSocket.connect();
 
         promise.then(function(networkPlayer){
-            webSocket.addListener('getAllPlayers',addNetworkPlayers);
+            webSocket.addListener('getPlayers',refreshPlayers);
             webSocket.addListener('playerConnect',addNetworkPlayer);
             webSocket.addListener('playerUpdate',self.updatePlayer);
             webSocket.addListener('updateUserPlayer',self.updateUserPlayer);
@@ -46,7 +49,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
             webSocket.addListener('startGame',updateGame);
             webSocket.addListener('updateGame',updateGame);
             webSocket.addListener('endGame',updateGame);
-            webSocket.getAllPlayers();
+            webSocket.refreshPlayers();
             self.clientID = networkPlayer.id;
         });
 
@@ -62,6 +65,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         player.score = data.score;
         player.active = data.active;
         player.ready = data.ready;
+        player.ping = data.ping;
         player.setGameID(data.gameID);
 
         if( data.shooting ){
@@ -76,23 +80,33 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         }
     };
 
+    self.isPlayerInActiveGame = function (player) {
+        if(self.networkGame && self.networkGame.activePlayers){
+            return self.networkGame.activePlayers.find(function(activePlayer){
+                    return activePlayer.id == player.getID();
+                });
+        } else {
+            return false;
+        }
+    };
+
 
     /**
-     * A jatekszerverhez csatlakozott jatekosok hozzaadasa
+     * A jatekszerverhez csatlakozott jatekosok frissitese
      *
      * @param networkPlayers
      */
-    function addNetworkPlayers(networkPlayers){
+    function refreshPlayers(networkPlayers){
         var activePlayers = [];
         for(var id in networkPlayers){
             addNetworkPlayer(networkPlayers[id]);
             activePlayers.push(id);
-
         }
 
         for(var id in self.networkPlayers){
             if(activePlayers.indexOf(id) < 0 ){
-                delete self.networkPlayers[id];
+                app.renderModel.removeObject(self.networkPlayers[id].model);
+                delete (self.networkPlayers[id]);
             }
         }
     }
@@ -105,13 +119,10 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     function addNetworkPlayer(player){
         if(player.id != self.clientID) {
             if(!self.networkPlayers[player.id]){
-                var newPlayer = new Player(app.renderModel);
+                var newPlayer = new Player(app.renderModel,playerModel);
                 newPlayer.networkPlayer = true;
                 newPlayer.setID(player.id);
-                newPlayer.modelLoad.then(function(){
-                    app.renderModel.addObject(newPlayer.model);
-                    app.renderModel.addFrameUpdatedObject(newPlayer);
-                });
+                newPlayer.addPlayerModel();
                 self.networkPlayers[player.id] = newPlayer;
 
                 console.log('Player ' + player.id + ' connected');
@@ -119,18 +130,6 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
                 self.updatePlayer(player);
             }
 
-        }
-    }
-
-    /**
-     * Lecsatlakozott jatekos eltavolitasa
-     *
-     * @param player
-     */
-    function removeNetworkPlayer(player){
-        if(self.networkPlayers[player.id]){
-            app.renderModel.removeObject(self.networkPlayers[player.id].model);
-            self.networkPlayers[player.id].active = false;
         }
     }
 

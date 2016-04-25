@@ -1,6 +1,7 @@
 <div>
     <div class="container">
-        <h3>Game stats: {{game.state}}</h3>
+        <h3>Current game {{game.running ? 'in progress' : game.queueing ? 'queueing' : 'ended' }}</h3>
+        <div>{{game.queueing ? 'This' : 'Next' }} match will start in {{(game.queueing ? game.queueTime - now : game.running ? (game.gameTime - now) : 10)/1000 | number : 0}} seconds.</div>
         <h4>Players in game:</h4>
         <table class="">
             <tr>
@@ -8,12 +9,13 @@
                 <th>HP</th>
                 <th>Score</th>
             </tr>
-            <tr ng-repeat="player in activePlayers">
+            <tr ng-repeat="player in activePlayers orderBy:score">
                 <td>{{player.name}}</td>
                 <td>{{player.health}}</td>
                 <td>{{player.score}}</td>
             </tr>
         </table>
+        <hr>
         <h4>Players in queue:</h4>
         <table class="">
             <tr>
@@ -29,8 +31,8 @@
         </table>
 
         <div class="join-buttons">
-            <button ng-click="userPlayer.setReadyState(true)">Ready!</button>
-            <button ng-click="userPlayer.setReadyState(false)">Out of this match</button>
+            <button ng-click="userPlayer.setReadyState(true)">Join match queue</button>
+            <button ng-click="userPlayer.setReadyState(false)">Leave match queue</button>
         </div>
     </div>
 </div>

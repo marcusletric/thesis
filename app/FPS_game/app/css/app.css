@@ -148,8 +148,8 @@ body {
           position: absolute;
           width: 70%;
           height: 70%;
-          top: 17%;
-          left: 17%;
+          top: 15%;
+          left: 15%;
           background-color: rgba(255, 255, 255, 0.8); }
           body .app_canvas [ui-view] .renderer .stats table {
             width: 100%; }
@@ -159,7 +159,8 @@ body {
             position: absolute;
             width: 100%;
             bottom: 0;
-            text-align: center; }
+            text-align: center;
+            padding-bottom: 15px; }
         body .app_canvas [ui-view] .renderer .loader {
           display: block;
           position: absolute;
