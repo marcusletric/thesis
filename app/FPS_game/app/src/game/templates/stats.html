@@ -1,0 +1,30 @@
+<div>
+    <div class="container">
+        <div>Game state: {{game.state}}</div>
+        <table class="">
+            <tr>
+                <th>Name</th>
+                <th>HP</th>
+                <th>Score</th>
+            </tr>
+            <tr ng-repeat="player in players">
+                <td>{{player.name}}</td>
+                <td>{{player.health}}</td>
+                <td>{{player.score}}</td>
+            </tr>
+        </table>
+        <table class="">
+            <tr>
+                <th>Name</th>
+                <th>ping</th>
+                <th>ready</th>
+            </tr>
+            <tr ng-repeat="player in queue">
+                <td>{{player.name}}</td>
+                <td>{{player.ping}}</td>
+                <td>{{player.ready}}</td>
+            </tr>
+        </table>
+        <button ng-click="userPlayer.setReadyState(true)">Ready!</button><button ng-click="userPlayer.setReadyState(false)">Out of this match</button>
+    </div>
+</div>

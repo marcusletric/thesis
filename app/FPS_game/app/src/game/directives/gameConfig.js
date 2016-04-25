@@ -1,16 +1,13 @@
-angular.module('fps_game.game').directive('gameConfig', function ($state,$window,gameConfigModel,webSocket) {
+angular.module('fps_game.game').directive('gameConfig', function ($state,$window,$cookies,gameConfigModel,webSocket) {
     return {
         restrict: 'A',
         link: function(scope){
-            if(gameConfigModel.setup){
-                webSocket.close();
-                $window.location.reload();
-            }
-
             gameConfigModel.setup = true;
 
+            var cookieData = $cookies.getObject('config') || {};
+
              scope.shadows   =    gameConfigModel.shadows;
-             scope.name      =    gameConfigModel.playerName;
+             scope.playerName      =    gameConfigModel.playerName;
              scope.resolution =   gameConfigModel.resolution;
              scope.serverAddr =   gameConfigModel.serverAddr;
 
@@ -18,18 +15,24 @@ angular.module('fps_game.game').directive('gameConfig', function ($state,$window
                 $state.go('game');
             };
 
-            scope.$watch("shadows",function(){
-                gameConfigModel.shadows = scope.shadows;
+            scope.$watch("shadows",function(value){
+                updateConfig("shadows",value);
             });
-            scope.$watch("name",function(){
-                gameConfigModel.playerName = scope.name;
+            scope.$watch("playerName",function(value){
+                updateConfig("playerName",value);
             });
-            scope.$watch("resolution",function(){
-                gameConfigModel.resolution = scope.resolution;
+            scope.$watch("resolution",function(value){
+                updateConfig("resolution",value);
             });
-            scope.$watch("serverAddr",function(){
-                gameConfigModel.serverAddr = scope.serverAddr;
+            scope.$watch("serverAddr",function(value){
+                updateConfig("serverAddr",value);
             });
+
+            function updateConfig(param,value){
+                gameConfigModel[param] = value;
+                cookieData[param] = value;
+                $cookies.putObject('config',cookieData);
+            }
         }
     }
 });

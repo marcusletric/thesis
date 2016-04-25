@@ -1,19 +1,53 @@
-angular.module('fps_game.network').service('webSocket', function($q,gameConfigModel){
+angular.module('fps_game.network').service('webSocket', function($q,gameConfigModel,$cookies){
+    var self = this;
+
     var listeners = {};
     var gameServer = null;
-    var clientID = token();
+    var clientID = 0;
     var initDeferred = $q.defer();
+    var activeCookie = null;
+    var alive = false;
 
     listeners.setClientID = function (newID){
+        activeCookie = $cookies.getObject('Player');
         clientID = newID;
-        initDeferred.resolve(clientID);
-        console.log('Connected, clientID set to: ' + clientID);
+        if(!activeCookie){
+            initDeferred.resolve({id: clientID});
+            console.log('Connected, clientID set to: ' + clientID);
+            $cookies.putObject('Player',{id: newID});
+        } else {
+            console.log('Trying to reconnect, clientID: ' + activeCookie.id);
+            self.debug();
+            self.reconnect(activeCookie);
+        }
+
+    };
+
+    listeners.debug = function(data){
+        console.log("-- Server debug --");
+        data.forEach(function(line){
+           console.log(line);
+        });
+    };
+
+    listeners.reconnect = function(oldPlayer){
+        if(oldPlayer){
+            initDeferred.resolve(oldPlayer);
+            clientID = oldPlayer.id;
+            console.log('Succesfully reconnected');
+        } else {
+            $cookies.remove('Player');
+            $cookies.putObject('Player',{id: clientID});
+            initDeferred.resolve({id: clientID});
+            console.log('Cannot reconnect, new id set.');
+        }
     };
 
     this.connect = function(){
         gameServer =  new WebSocket(gameConfigModel.serverAddr);
 
         gameServer.onopen = function (event) {
+            alive = true;
             var arguments = [
                 "setClientID"
             ];
@@ -26,12 +60,28 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
             listeners[data.listener] && listeners[data.listener](data.data);
         };
 
+        gameServer.onclose = function(event){
+            alive = false;
+        };
+
         return initDeferred.promise;
+    };
+
+    this.debug = function(){
+        sendCommand('debug',null);
     };
 
     this.close = function(){
         listeners = {};
         gameServer && gameServer.close();
+    };
+
+    this.getPlayerQueue = function(){
+        sendCommand('getQueue',null);
+    };
+
+    this.ping = function(){
+        sendCommand('ping',null);
     };
 
     this.getAllPlayers = function(){
@@ -46,6 +96,13 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
             player
         ];
         sendCommand('playerUpdate',arguments);
+    };
+
+    this.playerReadyStateChange = function(player){
+        var arguments = [
+            player
+        ];
+        sendCommand('playerReadyStateChange',arguments);
     };
 
     this.playerTakeDmg = function(data){
@@ -70,11 +127,22 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
         sendCommand('addPlayer',arguments);
     };
 
+    this.reconnect = function(player){
+        var arguments = [
+            player
+        ];
+        sendCommand('reconnect',arguments);
+    };
+
     this.addListener = function(listenName,listener){
         listeners[listenName] = listener;
     };
 
     function sendCommand(command,arguments) {
+        if(!alive){
+            console.log('connections issues');
+            return false;
+        }
         // Construct a msg object containing the data the server needs to process the message from the chat client.
         var msg = {
             command: command,
@@ -83,13 +151,5 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
 
         gameServer && gameServer.send(JSON.stringify(msg));
 
-    }
-
-    function rand() {
-        return Math.random().toString(36).substr(2);
-    }
-
-    function token(){
-        return rand() + rand();
     }
 });

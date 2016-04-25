@@ -2,6 +2,8 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 	return function (renderer) {
 		var self = this;
 		var playerID = null;
+		var gameID = null;
+		var pingStart = new Date().getTime();
 
 		var movementSpeed = 3.2;
 		var modelLoaded = false;
@@ -12,6 +14,8 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		self.model = new THREE.Object3D();
 		self.animation = null;
 		self.networkPlayer = false;
+		self.ready = false;
+		self.active = true;
 
 		self.lookTarget = new THREE.Object3D();
 		self.movementVector = null;
@@ -31,6 +35,18 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 
 		self.modelLoad = $q.defer();
 
+		self.setReadyState = function(readiness){
+			self.ready = readiness;
+			webSocket.playerReadyStateChange(self.getNetworkPlayer());
+		};
+
+		self.setGameID = function(id){
+			gameID = id;
+		};
+
+		self.getGameID = function(){
+			return gameID;
+		};
 
 		self.setID = function(id){
 			playerID = id;
@@ -42,6 +58,17 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		self.getID = function(){
 			return playerID;
 		};
+
+
+		self.refreshPing = function(){
+			pingStart = new Date().getTime();
+			webSocket.ping();
+		};
+
+		function pong(){
+			self.ping = (new Date().getTime()) - pingStart;
+			webSocket.playerUpdate(self.getNetworkPlayer());
+		}
 
 		self.update = function(deltaTime){
 
@@ -104,6 +131,9 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		self.getNetworkPlayer = function(){
 			return {
 				'id' : self.getID(),
+				'gameID' : self.getGameID(),
+				'ping' : self.ping,
+				'active' : self.active,
 				'name' : self.name,
 				'health' : self.health,
 				'score' :self.score,
@@ -111,7 +141,8 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 				'rotation' : self.model.rotation,
 				'walking'  : self.animation && self.animation.isPlaying,
 				'shooting' : self.shooting,
-				'inGame': self.inGame
+				'inGame': self.inGame,
+				'ready' : self.ready
 			}
 		};
 
@@ -202,6 +233,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		init();
 
 		function init(){
+			webSocket.addListener('pong',pong());
 			self.modelLoad = self.renderer.loadModel('/assets/meshes/player.dae').then(function (playerMesh) {
 				var boxhelper = new THREE.BoundingBoxHelper( playerMesh, 0xff0000 );
 				boxhelper.update();

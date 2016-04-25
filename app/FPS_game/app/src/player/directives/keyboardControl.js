@@ -15,7 +15,11 @@ angular.module('fps_game.player').directive('keyboardControl', function () {
 				  case 'D' : scope.player.movementFlags.R=1; break;
 			  }
 			  if(event.keyCode == 9){
+				  if(event.preventDefault) {
+					  event.preventDefault();
+				  }
 				  scope.showstats = true;
+				  scope.$digest();
 			  }
 		  });
 		  
@@ -32,7 +36,11 @@ angular.module('fps_game.player').directive('keyboardControl', function () {
 				  case 'D' : scope.player.movementFlags.R=0; break;
 			  }
 			  if(event.keyCode == 9){
+				  if(event.preventDefault) {
+					  event.preventDefault();
+				  }
 				  scope.showstats = false;
+				  scope.$digest();
 			  }
 		  });
 	  }

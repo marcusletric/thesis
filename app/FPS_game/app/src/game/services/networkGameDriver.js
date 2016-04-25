@@ -1,30 +1,71 @@
 angular.module('fps_game.game').service('networkGameDriver', function ($rootScope, webSocket, Player) {
     var self = this;
 
-    this.connect = function(){
+    self.addCurrentPlayer = function(player){
+        self.currentPlayer = player;
+        webSocket.addPlayer(player.getNetworkPlayer());
+    };
+
+    /**
+     * Jatekos parametereinek frissitese
+     *
+     * @param player
+     */
+    self.updatePlayer = function(data){
+        var networkPlayer = self.networkPlayers[data.id];
+        if(networkPlayer){
+            networkPlayer.model.position.set(data.position.x,data.position.y,data.position.z);
+            networkPlayer.model.rotation.set(data.rotation._x,data.rotation._y,data.rotation._z,data.rotation._order);
+            networkPlayer.name = data.name;
+            networkPlayer.health = data.health;
+            networkPlayer.score = data.score;
+            networkPlayer.active = data.active;
+            networkPlayer.ready = data.ready;
+            networkPlayer.setGameID(data.gameID);
+
+            if( data.shooting ){
+                networkPlayer.shooting = data.shooting;
+            }
+            if(networkPlayer.animation && data.walking != networkPlayer.animation.isPlaying){
+                data.walking ? networkPlayer.animation.play(0) : networkPlayer.animation.stop();
+            }
+
+            if(data.inGame){
+                networkPlayer.model.visible = true;
+            }
+        }
+
+    };
+
+    self.updateUserPlayer = function(data){
+        if(self.currentPlayer.getID() == data.id){
+            !angular.isUndefined(data.active) ? self.currentPlayer.active = data.active : '';
+            !angular.isUndefined(data.ready) ? self.currentPlayer.ready = data.ready : '';
+            !angular.isUndefined(data.name) ? self.currentPlayer.name = data.name : '';
+            data.gameID && self.currentPlayer.setGameID(data.gameID);
+        }
+    };
+
+    self.connect = function(){
         self.currentPlayer = null;
-        self.networkPlayers = [];
+        self.networkPlayers = {};
         self.clientID = null;
 
         var promise = webSocket.connect();
 
-        promise.then(function(clientID){
+        promise.then(function(networkPlayer){
             webSocket.addListener('getAllPlayers',addNetworkPlayers);
             webSocket.addListener('playerConnect',addNetworkPlayer);
             webSocket.addListener('playerDisconnect',removeNetworkPlayer);
-            webSocket.addListener('playerUpdate',updatePlayer);
+            webSocket.addListener('playerUpdate',self.updatePlayer);
+            webSocket.addListener('updateUserPlayer',self.updateUserPlayer);
             webSocket.addListener('playerTakeDmg',playerTakeDmg);
             webSocket.addListener('playerScore',playerScore);
             webSocket.getAllPlayers();
-            self.clientID = clientID;
+            self.clientID = networkPlayer.id;
         });
 
         return promise;
-    };
-
-    this.addCurrentPlayer = function(player){
-        self.currentPlayer = player;
-        webSocket.addPlayer(player.getNetworkPlayer());
     };
 
     /**
@@ -45,18 +86,22 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
      */
     function addNetworkPlayer(player){
         if(player.id != self.clientID) {
-            var newPlayer = new Player(app.renderModel);
-            newPlayer.networkPlayer = true;
-            newPlayer.setID(player.id);
-            newPlayer.modelLoad.then(function(){
-                newPlayer.model.position.set(player.position.x,player.position.y,player.position.z);
-                newPlayer.model.rotation.set(player.rotation._x,player.rotation._y,player.rotation._z,player.rotation._order);
-                app.renderModel.addObject(newPlayer.model);
-                app.renderModel.addFrameUpdatedObject(newPlayer);
-            });
-            self.networkPlayers[player.id] = newPlayer;
+            if(!self.networkPlayers[player.id]){
+                var newPlayer = new Player(app.renderModel);
+                newPlayer.networkPlayer = true;
+                newPlayer.setID(player.id);
+                newPlayer.modelLoad.then(function(){
+                    app.renderModel.addObject(newPlayer.model);
+                    app.renderModel.addFrameUpdatedObject(newPlayer);
+                });
+                self.networkPlayers[player.id] = newPlayer;
 
-            console.log('Player ' + player.id + ' connected');
+                console.log('Player ' + player.id + ' connected');
+            } else {
+                self.networkPlayers[player.id].model.position.set(player.position.x,player.position.y,player.position.z);
+                self.networkPlayers[player.id].model.rotation.set(player.rotation._x,player.rotation._y,player.rotation._z,player.rotation._order);
+            }
+
         }
     }
 
@@ -68,35 +113,10 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     function removeNetworkPlayer(player){
         if(self.networkPlayers[player.id]){
             app.renderModel.removeObject(self.networkPlayers[player.id].model);
-            delete(self.networkPlayers[player.id]);
+            self.networkPlayers[player.id].active = false;
         }
     }
 
-    /**
-     * Jatekos parametereinek frissitese
-     *
-     * @param player
-     */
-    function updatePlayer(data){
-        var networkPlayer = self.networkPlayers[data.id];
-        if(networkPlayer){
-            networkPlayer.model.position.set(data.position.x,data.position.y,data.position.z);
-            networkPlayer.model.rotation.set(data.rotation._x,data.rotation._y,data.rotation._z,data.rotation._order);
-            networkPlayer.name = data.name;
-            networkPlayer.health = data.health;
-            networkPlayer.score = data.score;
-            if( data.shooting ){
-                networkPlayer.shooting = data.shooting;
-            }
-            if(networkPlayer.animation && data.walking != networkPlayer.animation.isPlaying){
-                data.walking ? networkPlayer.animation.play(0) : networkPlayer.animation.stop();
-            }
-
-            if(data.inGame){
-                networkPlayer.model.visible = true;
-            }
-        }
-    }
 
     function playerTakeDmg(data){
         if(data.id == self.currentPlayer.getID()){

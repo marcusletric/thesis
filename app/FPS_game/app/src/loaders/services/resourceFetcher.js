@@ -1,5 +1,4 @@
-var resourceFetcher = function ($http,$q) {
-
+angular.module('fps_game.loaders').service('resourceFetcher', function ($http,$q) {
     this.fetchResources = function(dirPath){
         return getJSON(dirPath + '/resInfo.json')
     };
@@ -12,6 +11,4 @@ var resourceFetcher = function ($http,$q) {
         return deferred.promise;
     }
 
-};
-
-angular.module('fps_game.loaders').service('resourceFetcher', ['$http', '$q', resourceFetcher]);
+});

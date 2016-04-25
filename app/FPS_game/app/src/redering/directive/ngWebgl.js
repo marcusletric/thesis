@@ -7,7 +7,7 @@ angular.module('fps_game.rendering').directive('ngWebgl', function (gameDriver) 
             element[0].mozRequestPointerLock;
 
             element[0].onclick = function() {
-                element[0].requestPointerLock();
+              //  element[0].requestPointerLock();
             };
 
             document.addEventListener('pointerlockchange', lockChange, false);
@@ -17,7 +17,7 @@ angular.module('fps_game.rendering').directive('ngWebgl', function (gameDriver) 
                 scope.pointerLock = document.pointerLockElement === element[0] || document.mozPointerLockElement === element[0];
             }
 
-            gameDriver.start(scope);
+            gameDriver.init(scope);
 
             scope.$on('$destroy',function(){
                 scope.player = null;

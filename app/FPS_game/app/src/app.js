@@ -3,6 +3,7 @@ app.renderModel = null;
 
 angular.module('fps_game', [
   'ui.router',
+  'ngCookies',
   'fps_game.rendering',
   'fps_game.loaders',
   'fps_game.generators',

@@ -1,7 +1,7 @@
-var http = require('http'),
-    url = require("url"),
-    path = require("path"),
-    fs = require("fs");
+var http = require('http');
+var url = require("url");
+var path = require("path");
+var fs = require("fs");
 const PORT = 8080;
 
 require('./gameServer.js');

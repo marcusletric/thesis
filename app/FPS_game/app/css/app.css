@@ -91,7 +91,7 @@ body {
             display: block;
             bottom: 0;
             left: 50%;
-            margin-left: -80px;
+            margin-left: -70px;
             font-size: 20px; }
           body .app_canvas [ui-view] .renderer .hud .dmgoverlay {
             display: block;
@@ -142,18 +142,32 @@ body {
               body .app_canvas [ui-view] .renderer .hud .crosshair div.br {
                 border-top: 1px solid #000000;
                 border-left: 1px solid #000000; }
+        body .app_canvas [ui-view] .renderer .stats {
+          font-size: 12px;
+          position: absolute;
+          width: 70%;
+          height: 70%;
+          top: 17%;
+          left: 17%; }
         body .app_canvas [ui-view] .renderer .loader {
           display: block;
           position: absolute;
           width: 400px;
-          height: 200px;
+          height: 100px;
           background: rgba(255, 255, 255, 0.3);
           color: #e38d13;
           font-size: 20px;
           font-family: Verdana;
           top: 50%;
           left: 50%;
-          margin-top: -100px;
+          margin-top: -50px;
           margin-left: -200px;
           text-align: center;
           vertical-align: middle; }
+          body .app_canvas [ui-view] .renderer .loader .block {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            transition: width 0.3s;
+            height: 5px;
+            background-color: #e38d13; }

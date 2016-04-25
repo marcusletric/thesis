@@ -1,4 +1,7 @@
-angular.module('fps_game.game').service('gameConfigModel', function () {
+angular.module('fps_game.game').service('gameConfigModel', function ($cookies) {
+    var self = this;
+
+    var cookieData = $cookies.getObject('config');
 
     this.setup = false;
 
@@ -7,4 +10,9 @@ angular.module('fps_game.game').service('gameConfigModel', function () {
     this.playerName = '';
     this.serverAddr = 'ws://localhost:9001';
 
+    if(cookieData){
+        for(key in cookieData){
+            self[key] = cookieData[key];
+        }
+    }
 });

@@ -1,9 +1,9 @@
-angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetcher, sceneLoader, Player, networkGameDriver, gameConfigModel) {
+angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetcher, sceneLoader, Player, networkGameDriver,webSocket,gameConfigModel) {
    var self = this;
    var respawnPoints = [];
    var renderScope = null;
 
-   this.start = function(scope){
+   this.init = function(scope){
       renderScope = scope;
       // A forrasok gyokerkonyvtara
       var resRoot = '/assets';
@@ -16,28 +16,42 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       });
    };
 
+   this.start = function(){
+      self.respawnPlayer(networkGameDriver.currentPlayer);
+      networkGameDriver.currentPlayer.score=0;
+   };
+
+   webSocket.addListener('startGame',self.start);
+
    /**
     * Jatek inicializalasa
     */
    function initGame() {
       collectRespawnPoints();
-      networkGameDriver.connect().then(function (clientID) {
-         addUserPlayer(clientID);
+      networkGameDriver.connect().then(function (networkPlayer) {
+         addUserPlayer(networkPlayer);
       });
    }
 
    /**
     * Aktualis jatekos hozzaadasa
     *
-    * @param clientID Kliens azonosito
+    * @param networkPlayer Játékos objektum
     * @returns {$q.promise}
     */
-   function addUserPlayer(clientID) {
+   function addUserPlayer(networkPlayer) {
       renderScope.player = new Player(app.renderModel);
-      renderScope.player.name = gameConfigModel.name;
-      renderScope.player.setID(clientID);
-      networkGameDriver.addCurrentPlayer(renderScope.player);
-      //renderScope.player.on('die')
+      renderScope.player.name = networkPlayer.name || gameConfigModel.playerName;
+      renderScope.player.setID(networkPlayer.id);
+
+      if(networkPlayer.position && networkPlayer.rotation){
+         networkGameDriver.currentPlayer = renderScope.player;
+         networkGameDriver.updatePlayer(networkPlayer);
+         networkGameDriver.updateUserPlayer(networkPlayer);
+      } else {
+         networkGameDriver.addCurrentPlayer(renderScope.player);
+      }
+      webSocket.playerUpdate(networkGameDriver.currentPlayer.getNetworkPlayer());
    }
 
    function collectRespawnPoints(){
@@ -67,4 +81,6 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       }
       renderScope.$digest();
    }
+
+
 });

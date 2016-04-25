@@ -26,12 +26,12 @@ angular.module('fps_game.player').directive('mouseControl', function ($window, g
             $($window).on('click',function(event){
                 if(scope.player){
                     if(scope.player.dead){
-                        !scope.respawning && $timeout(function(){
+                        /*!scope.respawning && $timeout(function(){
                             gameDriver.respawnPlayer(scope.player);
                             scope.respawning = false;
                         },5000);
                         scope.respawning = true;
-                        scope.$digest();
+                        scope.$digest();*/
                     } else {
                         scope.player.shoot();
                     }

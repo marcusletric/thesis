@@ -1,9 +1,21 @@
 var ws = require("nodejs-websocket");
+var Game = require('./gameInstance.js');
+
 const WSPORT=9001;
 const WSHOST="localhost";
 
+var queueTimer;
+var queueTime=120000;
+
+var gameTimer;
+var gameTime=300000;
+
 var players = {};
-var currID = 10;
+var playerIncrementID = 10;
+
+var gameIncrementID = 10;
+var activeGame = new Game(gameIncrementID);
+
 
 var self = this;
 var connections = {};
@@ -11,7 +23,7 @@ var connections = {};
 var gameServer = ws.createServer(function (conn) {
     console.log('Player connected');
 
-    conn.clientID = currID;
+    conn.clientID = playerIncrementID;
 
     connections[conn.clientID] = conn;
 
@@ -36,37 +48,118 @@ var gameServer = ws.createServer(function (conn) {
         }
     });
 
-    currID++;
+    playerIncrementID++;
 }).listen(WSPORT,WSHOST);
 
 console.log("Gameserver started on " + WSHOST + ":" + WSPORT);
 
+this.getGameState = function(){
+    return {
+        'listener': 'getGameState',
+        'data': activeGame.state
+    };
+};
+
+this.getQueue = function(){
+    return {
+        'listener': 'getQueue',
+        'data': activeGame.playerQueue
+    };
+};
 
 this.addPlayer = function(player) {
+    if(!player || !player.id || typeof(player.id) != "number"){
+        return false;
+    }
     console.log('Player ' + player.id + ' added to pool');
+    player.active = true;
+    player.gameID = gameIncrementID;
     players[player.id] = player;
-    broadcast({
-        'listener': 'playerConnect',
-        'data': player
-    });
+    if(activeGame.queueing){
+        activeGame.queue(player);
+        broadcast({
+            'listener': 'updateUserPlayer',
+            'data': player
+        });
+    }
+
+    broadcast(self.getPlayers('getAllPlayers'));
 };
 
 function removePlayer(player){
-    delete(players[player.id]);
+    player.active = false;
+    activeGame.unQueue(player);
     broadcast({
         'listener': 'playerDisconnect',
         'data': player
     });
 }
 
+this.playerReadyStateChange = function(player){
+    players[player.id].ready = player.ready;
+    if(players[player.id].ready != !!activeGame.inQueue(player)){
+        player.ready ? activeGame.queue(player) : activeGame.unQueue(player);
+    }
+    broadcast({
+        'listener': 'updateUserPlayer',
+        'data': player
+    });
+
+    broadcast(self.getPlayers('getAllPlayers'));
+};
+
+function startQueue(){
+    activeGame = new Game(gameIncrementID);
+    activeGame.startQueueing(new Date().getTime().toString(),queueTime);
+    console.log('Queueing players');
+    for(key in players){
+        if(players[key] && players[key].ready){
+            activeGame.queue(players[key]);
+        }
+    }
+}
+
+function startGame(){
+    console.log('Starting game...');
+    activeGame.startGame();
+    gameTimer = setTimeout(endGame,gameTime);
+    return {
+        'listener': 'startGame',
+        'data': activeGame
+    };
+}
+
+function endGame(){
+    console.log('Game ended');
+    activeGame.endGame();
+    gameIncrementID++;
+    setTimeout(startQueue,10000);
+    return {
+        'listener': 'endGame',
+        'data': activeGame
+    };
+}
+
 this.getPlayers = function(listener){
+    var activePlayers = {};
+    for(id in players){
+        if(players[id].active) {
+            activePlayers[id] = {};
+            for (key in players[id]) {
+                activePlayers[id][key] = players[id][key];
+            }
+        }
+    }
     return {
         'listener': listener,
-        'data': players
+        'data': activePlayers
     };
 };
 
 this.playerUpdate = function(player){
+    if(!players[player.id]){
+        return false;
+    }
     players[player.id] = player;
     broadcast({
         'listener': 'playerUpdate',
@@ -79,6 +172,10 @@ this.playerTakeDmg = function(player){
         'listener': 'playerTakeDmg',
         'data': player
     });
+};
+
+this.ping = function(){
+    return "pong";
 };
 
 this.playerScore = function(dmg,player){
@@ -97,8 +194,36 @@ this.getNewId = function(listener,conn){
     return responseObj;
 };
 
+this.debug = function(){
+    var responseObj = {
+        'listener': 'debug',
+        'data': [activeGame,players]
+    };
+    return responseObj;
+};
+
+this.reconnect = function(player,conn) {
+    console.log('Player trying to reconnect');
+    var responseObj = {
+        'listener': 'reconnect'
+    };
+
+    if(activeGame && player.gameID == activeGame.id && playerIncrementID > player.id && players[player.id] && !connections[player.id]){
+        console.log('restoring connection');
+        connections[player.id] = conn;
+        players[player.id].active = true;
+        console.log('restoring player');
+        responseObj.data = players[player.id];
+        console.log('Connection sucessfully restored.');
+    } else {
+        responseObj.data = false;
+        console.log('Reconnect failed, ID stays the same.');
+    }
+    return responseObj;
+};
+
 function callFunction(command,arguments,connection){
-    if(['getNewId', 'playerUpdate'].indexOf(command) > -1 ){
+    if(['getNewId', 'playerUpdate', 'reconnect'].indexOf(command) > -1 ){
         arguments = arguments.concat(connection);
     }
 
@@ -109,7 +234,11 @@ function callFunction(command,arguments,connection){
 }
 
 function sendResponse(conn,response){
-    conn.sendText(JSON.stringify(response));
+    conn.sendText(
+        JSON.stringify(
+            response
+        )
+    );
 }
 
 function broadcast(data){
@@ -117,3 +246,7 @@ function broadcast(data){
         conn.sendText(JSON.stringify(data));
     });
 }
+
+startQueue();
+
+queueTimer = setTimeout(startGame,queueTime);
