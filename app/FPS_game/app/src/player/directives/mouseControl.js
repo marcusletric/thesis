@@ -1,11 +1,38 @@
 angular.module('fps_game.player').directive('mouseControl', function ($window, gameDriver, $timeout) {
     return {
         restrict: 'A',
-        link: function(scope){
+        link: function(scope,element){
             var canvas = app.renderModel.renderer.domElement;
             var middle = {x:canvas.width/2,y:canvas.height/2};
             var currentPos = angular.extend({},middle);
             var mouseSensitivity = 0.5;
+
+            element[0].requestPointerLock = element[0].requestPointerLock ||
+                element[0].mozRequestPointerLock;
+
+            document.exitPointerLock = document.exitPointerLock ||
+                document.mozExitPointerLock ||
+                document.webkitExitPointerLock;
+
+            element[0].onclick = function() {
+               if(!scope.player.dead) {
+                   element[0].requestPointerLock();
+               }
+            };
+
+            scope.$watch('player.dead',function(dead){
+                if(dead){
+                    document.exitPointerLock();
+                }
+            });
+
+            document.addEventListener('pointerlockchange', lockChange, false);
+            document.addEventListener('mozpointerlockchange', lockChange, false);
+
+            function lockChange() {
+                scope.pointerLock = document.pointerLockElement === element[0] || document.mozPointerLockElement === element[0];
+            }
+
             scope.respawning = false;
             $($window).on('mousemove',function(event){
                 if(scope.pointerLock && !scope.loading && scope.player && !scope.player.dead){

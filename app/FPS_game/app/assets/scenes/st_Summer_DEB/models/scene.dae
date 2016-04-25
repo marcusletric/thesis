@@ -405,24 +405,6 @@
       <node name="EnvironmentAmbientLight">
         <instance_light url="#EnvironmentAmbientLight"/>
       </node>
-      <node id="node-Plane" name="Plane">
-        <matrix>-14456.69 -58.43169 -5.185e-8 0 -58.43169 14456.69 1.28283e-5 0 0 -0.004710626 39.37008 0 0 0 0 1</matrix>
-        <instance_geometry url="#geom-Plane">
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="ColorMaterial" target="#ColorEffectR204G204B204-material"/>
-            </technique_common>
-          </bind_material>
-        </instance_geometry>
-        <extra>
-          <technique profile="OpenCOLLADA">
-            <cast_shadows>1</cast_shadows>
-            <primary_visibility>1</primary_visibility>
-            <receive_shadows>1</receive_shadows>
-            <secondary_visibility>1</secondary_visibility>
-          </technique>
-        </extra>
-      </node>
       <node id="node-Sphere" name="Sphere">
         <matrix>11811.02 0 0 0 0 11811.02 0 0 0 0 11811.02 0 0 0 0 1</matrix>
         <instance_geometry url="#geom-Sphere">

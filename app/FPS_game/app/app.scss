@@ -122,12 +122,27 @@ body {
           }
         }
         .stats {
+          padding: 15px;
           font-size: 12px;
           position: absolute;
           width: 70%;
           height: 70%;
           top: 17%;
           left: 17%;
+          background-color: rgba(255,255,255,0.8);
+          table {
+            width:100%;
+            td, th {
+              text-align: left;
+            }
+          }
+          .join-buttons {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            text-align: center;
+            padding-bottom: 15px;
+          }
         }
         .loader {
           display: block;

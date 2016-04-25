@@ -1,6 +1,8 @@
 angular.module('fps_game.game').service('networkGameDriver', function ($rootScope, webSocket, Player) {
     var self = this;
 
+    self.networkGame = null;
+
     self.addCurrentPlayer = function(player){
         self.currentPlayer = player;
         webSocket.addPlayer(player.getNetworkPlayer());
@@ -14,27 +16,8 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     self.updatePlayer = function(data){
         var networkPlayer = self.networkPlayers[data.id];
         if(networkPlayer){
-            networkPlayer.model.position.set(data.position.x,data.position.y,data.position.z);
-            networkPlayer.model.rotation.set(data.rotation._x,data.rotation._y,data.rotation._z,data.rotation._order);
-            networkPlayer.name = data.name;
-            networkPlayer.health = data.health;
-            networkPlayer.score = data.score;
-            networkPlayer.active = data.active;
-            networkPlayer.ready = data.ready;
-            networkPlayer.setGameID(data.gameID);
-
-            if( data.shooting ){
-                networkPlayer.shooting = data.shooting;
-            }
-            if(networkPlayer.animation && data.walking != networkPlayer.animation.isPlaying){
-                data.walking ? networkPlayer.animation.play(0) : networkPlayer.animation.stop();
-            }
-
-            if(data.inGame){
-                networkPlayer.model.visible = true;
-            }
+            self.updatePlayerAttrs(networkPlayer,data);
         }
-
     };
 
     self.updateUserPlayer = function(data){
@@ -56,11 +39,13 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         promise.then(function(networkPlayer){
             webSocket.addListener('getAllPlayers',addNetworkPlayers);
             webSocket.addListener('playerConnect',addNetworkPlayer);
-            webSocket.addListener('playerDisconnect',removeNetworkPlayer);
             webSocket.addListener('playerUpdate',self.updatePlayer);
             webSocket.addListener('updateUserPlayer',self.updateUserPlayer);
             webSocket.addListener('playerTakeDmg',playerTakeDmg);
             webSocket.addListener('playerScore',playerScore);
+            webSocket.addListener('startGame',updateGame);
+            webSocket.addListener('updateGame',updateGame);
+            webSocket.addListener('endGame',updateGame);
             webSocket.getAllPlayers();
             self.clientID = networkPlayer.id;
         });
@@ -68,14 +53,47 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         return promise;
     };
 
+    self.updatePlayerAttrs = function(player,data){
+        player.model.position.set(data.position.x,data.position.y,data.position.z);
+        player.model.rotation.set(data.rotation._x,data.rotation._y,data.rotation._z,data.rotation._order);
+        player.name = data.name;
+        player.dead = data.dead;
+        player.health = data.health;
+        player.score = data.score;
+        player.active = data.active;
+        player.ready = data.ready;
+        player.setGameID(data.gameID);
+
+        if( data.shooting ){
+            player.shooting = data.shooting;
+        }
+        if(player.animation && data.walking != player.animation.isPlaying){
+            data.walking ? player.animation.play(0) : player.animation.stop();
+        }
+
+        if(data.inGame){
+            player.model.visible = true;
+        }
+    };
+
+
     /**
      * A jatekszerverhez csatlakozott jatekosok hozzaadasa
      *
      * @param networkPlayers
      */
     function addNetworkPlayers(networkPlayers){
+        var activePlayers = [];
         for(var id in networkPlayers){
             addNetworkPlayer(networkPlayers[id]);
+            activePlayers.push(id);
+
+        }
+
+        for(var id in self.networkPlayers){
+            if(activePlayers.indexOf(id) < 0 ){
+                delete self.networkPlayers[id];
+            }
         }
     }
 
@@ -98,8 +116,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
 
                 console.log('Player ' + player.id + ' connected');
             } else {
-                self.networkPlayers[player.id].model.position.set(player.position.x,player.position.y,player.position.z);
-                self.networkPlayers[player.id].model.rotation.set(player.rotation._x,player.rotation._y,player.rotation._z,player.rotation._order);
+                self.updatePlayer(player);
             }
 
         }
@@ -132,6 +149,10 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
             }
             $rootScope.$digest();
         }
+    }
+
+    function updateGame (game){
+        self.networkGame = game;
     }
 
 });

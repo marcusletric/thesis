@@ -1,18 +1,20 @@
 <div>
     <div class="container">
-        <div>Game state: {{game.state}}</div>
+        <h3>Game stats: {{game.state}}</h3>
+        <h4>Players in game:</h4>
         <table class="">
             <tr>
                 <th>Name</th>
                 <th>HP</th>
                 <th>Score</th>
             </tr>
-            <tr ng-repeat="player in players">
+            <tr ng-repeat="player in activePlayers">
                 <td>{{player.name}}</td>
                 <td>{{player.health}}</td>
                 <td>{{player.score}}</td>
             </tr>
         </table>
+        <h4>Players in queue:</h4>
         <table class="">
             <tr>
                 <th>Name</th>
@@ -25,6 +27,10 @@
                 <td>{{player.ready}}</td>
             </tr>
         </table>
-        <button ng-click="userPlayer.setReadyState(true)">Ready!</button><button ng-click="userPlayer.setReadyState(false)">Out of this match</button>
+
+        <div class="join-buttons">
+            <button ng-click="userPlayer.setReadyState(true)">Ready!</button>
+            <button ng-click="userPlayer.setReadyState(false)">Out of this match</button>
+        </div>
     </div>
 </div>

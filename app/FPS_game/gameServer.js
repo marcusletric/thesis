@@ -5,7 +5,7 @@ const WSPORT=9001;
 const WSHOST="localhost";
 
 var queueTimer;
-var queueTime=120000;
+var queueTime=12000;
 
 var gameTimer;
 var gameTime=300000;
@@ -19,11 +19,13 @@ var activeGame = new Game(gameIncrementID);
 
 var self = this;
 var connections = {};
+var connIncrementID = 10;
 
 var gameServer = ws.createServer(function (conn) {
     console.log('Player connected');
 
-    conn.clientID = playerIncrementID;
+    conn.clientID = playerIncrementID ;
+    conn.id = connIncrementID ;
 
     connections[conn.clientID] = conn;
 
@@ -48,6 +50,7 @@ var gameServer = ws.createServer(function (conn) {
         }
     });
 
+    connIncrementID++;
     playerIncrementID++;
 }).listen(WSPORT,WSHOST);
 
@@ -75,24 +78,15 @@ this.addPlayer = function(player) {
     player.active = true;
     player.gameID = gameIncrementID;
     players[player.id] = player;
-    if(activeGame.queueing){
-        activeGame.queue(player);
-        broadcast({
-            'listener': 'updateUserPlayer',
-            'data': player
-        });
-    }
 
     broadcast(self.getPlayers('getAllPlayers'));
 };
 
 function removePlayer(player){
-    player.active = false;
+    players[player.id].active = false;
     activeGame.unQueue(player);
-    broadcast({
-        'listener': 'playerDisconnect',
-        'data': player
-    });
+
+    broadcast(self.getPlayers('getAllPlayers'));
 }
 
 this.playerReadyStateChange = function(player){
@@ -123,10 +117,10 @@ function startGame(){
     console.log('Starting game...');
     activeGame.startGame();
     gameTimer = setTimeout(endGame,gameTime);
-    return {
+    broadcast({
         'listener': 'startGame',
         'data': activeGame
-    };
+    });
 }
 
 function endGame(){
@@ -134,10 +128,10 @@ function endGame(){
     activeGame.endGame();
     gameIncrementID++;
     setTimeout(startQueue,10000);
-    return {
-        'listener': 'endGame',
+    broadcast({
+        'listener': 'startGame',
         'data': activeGame
-    };
+    });
 }
 
 this.getPlayers = function(listener){
@@ -161,6 +155,13 @@ this.playerUpdate = function(player){
         return false;
     }
     players[player.id] = player;
+    if(activeGame && activeGame.running){
+        activeGame.activePlayers.forEach(function(activePlayer){
+            if(activePlayer.id == player.id){
+
+            }
+        });
+    }
     broadcast({
         'listener': 'playerUpdate',
         'data': player
@@ -175,7 +176,7 @@ this.playerTakeDmg = function(player){
 };
 
 this.ping = function(){
-    return "pong";
+    return 'pong';
 };
 
 this.playerScore = function(dmg,player){
@@ -210,6 +211,9 @@ this.reconnect = function(player,conn) {
 
     if(activeGame && player.gameID == activeGame.id && playerIncrementID > player.id && players[player.id] && !connections[player.id]){
         console.log('restoring connection');
+        delete(connections[conn.clientID]);
+        delete(players[conn.clientID]);
+        conn.clientID = player.id;
         connections[player.id] = conn;
         players[player.id].active = true;
         console.log('restoring player');

@@ -16,9 +16,14 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       });
    };
 
-   this.start = function(){
-      self.respawnPlayer(networkGameDriver.currentPlayer);
-      networkGameDriver.currentPlayer.score=0;
+   this.start = function(game){
+      if(game.activePlayers.find(function(activePlayer){
+            return activePlayer.id == networkGameDriver.currentPlayer.getID();
+          })){
+         self.respawnPlayer(networkGameDriver.currentPlayer);
+         networkGameDriver.currentPlayer.score=0;
+      }
+      networkGameDriver.networkGame = game;
    };
 
    webSocket.addListener('startGame',self.start);
@@ -44,13 +49,17 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       renderScope.player.name = networkPlayer.name || gameConfigModel.playerName;
       renderScope.player.setID(networkPlayer.id);
 
-      if(networkPlayer.position && networkPlayer.rotation){
-         networkGameDriver.currentPlayer = renderScope.player;
-         networkGameDriver.updatePlayer(networkPlayer);
-         networkGameDriver.updateUserPlayer(networkPlayer);
-      } else {
-         networkGameDriver.addCurrentPlayer(renderScope.player);
+      networkGameDriver.addCurrentPlayer(renderScope.player);
+
+      if(networkPlayer.position && networkPlayer.rotation && networkPlayer.inGame){
+         renderScope.player.modelLoad.then(function(){
+            app.renderModel.addObject(renderScope.player.model);
+            renderScope.player.model.visible = true;
+            app.renderModel.addFrameUpdatedObject(renderScope.player);
+            networkGameDriver.updatePlayerAttrs(renderScope.player,networkPlayer);
+         });
       }
+
       webSocket.playerUpdate(networkGameDriver.currentPlayer.getNetworkPlayer());
    }
 

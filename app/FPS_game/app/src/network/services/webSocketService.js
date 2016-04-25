@@ -8,7 +8,7 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
     var activeCookie = null;
     var alive = false;
 
-    listeners.setClientID = function (newID){
+    listeners.setClientID = [function (newID){
         activeCookie = $cookies.getObject('Player');
         clientID = newID;
         if(!activeCookie){
@@ -17,20 +17,19 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
             $cookies.putObject('Player',{id: newID});
         } else {
             console.log('Trying to reconnect, clientID: ' + activeCookie.id);
-            self.debug();
             self.reconnect(activeCookie);
         }
 
-    };
+    }];
 
-    listeners.debug = function(data){
+    listeners.debug = [function(data){
         console.log("-- Server debug --");
         data.forEach(function(line){
            console.log(line);
         });
-    };
+    }];
 
-    listeners.reconnect = function(oldPlayer){
+    listeners.reconnect = [function(oldPlayer){
         if(oldPlayer){
             initDeferred.resolve(oldPlayer);
             clientID = oldPlayer.id;
@@ -41,7 +40,7 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
             initDeferred.resolve({id: clientID});
             console.log('Cannot reconnect, new id set.');
         }
-    };
+    }];
 
     this.connect = function(){
         gameServer =  new WebSocket(gameConfigModel.serverAddr);
@@ -57,7 +56,9 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
 
         gameServer.onmessage = function (event) {
             var data = angular.fromJson(event.data);
-            listeners[data.listener] && listeners[data.listener](data.data);
+            listeners[data.listener] && listeners[data.listener].forEach(function(listener){
+                listener(data.data);
+            });
         };
 
         gameServer.onclose = function(event){
@@ -135,7 +136,10 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
     };
 
     this.addListener = function(listenName,listener){
-        listeners[listenName] = listener;
+        if(!listeners[listenName]){
+            listeners[listenName] = [];
+        }
+        listeners[listenName].push(listener);
     };
 
     function sendCommand(command,arguments) {

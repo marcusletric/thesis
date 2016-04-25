@@ -133,6 +133,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 				'id' : self.getID(),
 				'gameID' : self.getGameID(),
 				'ping' : self.ping,
+				'dead' : self.dead,
 				'active' : self.active,
 				'name' : self.name,
 				'health' : self.health,

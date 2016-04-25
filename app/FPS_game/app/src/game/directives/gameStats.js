@@ -5,22 +5,43 @@ angular.module('fps_game.game').directive('gameStats', function (networkGameDriv
         scope: {userPlayer : "="},
         link: function(scope){
 
-            webSocket.addListener('getAllPlayers',refresh);
-            webSocket.addListener('getQueue',updateQueue);
+            webSocket.addListener('getAllPlayers',function(){$timeout(refresh);});
+            webSocket.addListener('playerTakeDmg',function(){$timeout(refresh);});
+            webSocket.addListener('playerScore',function(){$timeout(refresh);});
+            webSocket.addListener('gameUpdate',function(){$timeout(refresh);});
 
-            function refresh(){
+            function refresh(event){
                 $cookies.putObject('Player',networkGameDriver.currentPlayer.getNetworkPlayer());
                 //scope.players = networkGameDriver.networkPlayers;
                 scope.game = networkGameDriver.networkGame;
-                scope.queue = networkGameDriver.networkPlayers;
+                scope.activePlayers = [];
+
+                if(networkGameDriver.networkGame && networkGameDriver.networkGame.activePlayers) {
+                    networkGameDriver.networkGame.activePlayers.forEach(function(activePlayer){
+                        !!networkGameDriver.networkPlayers[activePlayer.id] && scope.activePlayers.push(networkGameDriver.networkPlayers[activePlayer.id]);
+                    });
+                    if(networkGameDriver.currentPlayer){
+
+                    }
+                }
+
+                scope.queue = [];
+
+                if(!networkGameDriver.networkGame){
+                    scope.queue = networkGameDriver.networkPlayers;
+                } else {
+                    networkGameDriver.networkGame.activePlayers.forEach(function(activePlayer){
+                        !networkGameDriver.networkPlayers[activePlayer] && scope.queue.push(networkGameDriver.networkPlayers[activePlayer]);
+                    });
+                }
+
                 networkGameDriver.currentPlayer.refreshPing();
-                scope.$digest();
+                event && scope.$digest();
             }
 
-            function updateQueue (queue){
-                scope.queue = queue;
-                scope.$digest();
-            }
+            refresh();
+
+
 
         }
     }

@@ -143,12 +143,23 @@ body {
                 border-top: 1px solid #000000;
                 border-left: 1px solid #000000; }
         body .app_canvas [ui-view] .renderer .stats {
+          padding: 15px;
           font-size: 12px;
           position: absolute;
           width: 70%;
           height: 70%;
           top: 17%;
-          left: 17%; }
+          left: 17%;
+          background-color: rgba(255, 255, 255, 0.8); }
+          body .app_canvas [ui-view] .renderer .stats table {
+            width: 100%; }
+            body .app_canvas [ui-view] .renderer .stats table td, body .app_canvas [ui-view] .renderer .stats table th {
+              text-align: left; }
+          body .app_canvas [ui-view] .renderer .stats .join-buttons {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            text-align: center; }
         body .app_canvas [ui-view] .renderer .loader {
           display: block;
           position: absolute;

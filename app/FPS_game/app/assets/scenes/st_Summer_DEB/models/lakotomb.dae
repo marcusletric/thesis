@@ -1721,7 +1721,7 @@
       <init_from>./images/0_concrete_pat.jpg</init_from>
     </image>
     <image id="floor_jpg">
-      <init_from>./images/5_floor.jpg</init_from>
+      <init_from>./images/paving.jpg</init_from>
     </image>
     <image id="Concrete_Cast-In-Place_Panels_Reveal_Smooth_bump_jpg">
       <init_from>./images/4_Concrete.Cast-In-Place.Panels.Reveal.Smooth.bump.jpg</init_from>
