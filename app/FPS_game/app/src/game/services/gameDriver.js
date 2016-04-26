@@ -39,7 +39,12 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
    };
 
    self.endGame = function(game){
-
+      for(var id in networkGameDriver.networkPlayers){
+         networkGameDriver.networkPlayers[id].model.visible = false;
+         app.renderModel.removeFrameUpdatedObject(networkGameDriver.networkPlayers[id]);
+      }
+      networkGameDriver.currentPlayer.model.visible = false;
+      app.renderModel.removeFrameUpdatedObject(networkGameDriver.currentPlayer);
    };
 
 
@@ -70,9 +75,14 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
    }
 
    self.respawnPlayer = function(player){
+      if(!player.inGame){
+         return false;
+      }
+
       var randomPoint = respawnPoints[Math.floor(Math.random()*respawnPoints.length)];
       player.health = 100;
       player.dead = false;
+      player.addPlayerModel();
       player.model.position.set( randomPoint.position.x, randomPoint.position.y, randomPoint.position.z);
       player.model.rotation.set( randomPoint.rotation.x, randomPoint.rotation.y, randomPoint.rotation.z);
       player.model.updateMatrix();
@@ -80,9 +90,6 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
       player.lookAngles.y = player.initialRotation.y;
       player.update();
 
-      if(!player.inGame){
-
-      }
       renderScope.$digest();
    }
 

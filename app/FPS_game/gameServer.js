@@ -80,27 +80,28 @@ this.playerReadyStateChange = function(player){
     if(players[player.id].ready != !!activeGame.inQueue(player)){
         player.ready ? activeGame.queue(player) : activeGame.unQueue(player);
     }
-    broadcast({
-        'listener': 'updateUserPlayer',
-        'data': player
-    });
 
     broadcast(self.getPlayers());
 };
 
 function startQueue(){
-    activeGame = new Game(gameIncrementID);
+    activeGame = new Game(gameIncrementID,players);
     activeGame.startQueueing((new Date()).getTime(),queueTime);
-    console.log('Queueing players');
-    for(key in players){
-        if(players[key] && players[key].ready){
-            activeGame.queue(players[key]);
+    for(var id in players){
+        if(players[id].active && players[id].ready && !activeGame.inQueue(players[id])){
+            activeGame.queue(players[id]);
         }
     }
+
+    console.log('Queueing players');
+
+    broadcast(self.getPlayers());
+
     broadcast({
         'listener': 'updateGame',
         'data': activeGame
     });
+
     queueTimer = setTimeout(startGame,queueTime);
 }
 
@@ -108,11 +109,14 @@ function startGame(){
     console.log('Starting game...');
     activeGame.startGame((new Date()).getTime(),gameTime);
     gameTimer = setTimeout(endGame,gameTime);
+
+    broadcast(self.getPlayers());
+
     broadcast({
         'listener': 'startGame',
         'data': activeGame
     });
-    broadcast(self.getPlayers());
+
     gameIncrementID++;
 }
 
@@ -120,8 +124,9 @@ function endGame(){
     console.log('Game ended');
     activeGame.endGame();
     setTimeout(startQueue,10000);
+
     broadcast({
-        'listener': 'startGame',
+        'listener': 'endGame',
         'data': activeGame
     });
 }
@@ -147,13 +152,7 @@ this.playerUpdate = function(player){
         return false;
     }
     players[player.id] = player;
-    if(activeGame && activeGame.running){
-        activeGame.activePlayers.forEach(function(activePlayer){
-            if(activePlayer.id == player.id){
 
-            }
-        });
-    }
     broadcast({
         'listener': 'playerUpdate',
         'data': player

@@ -77,6 +77,12 @@ angular.module('fps_game.rendering')
 				self.updateOnFrame.push(object);
 			};
 
+            self.removeFrameUpdatedObject = function(object){
+                self.updateOnFrame = self.updateOnFrame.filter(function(updatedObj){
+                    return object != updatedObj;
+                });
+            };
+
             self.addObject = function (object) {
                 sceneElements.push(object);
                 self.scene.add(object);

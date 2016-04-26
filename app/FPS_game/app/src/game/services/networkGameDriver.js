@@ -22,15 +22,6 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         }
     };
 
-    self.updateUserPlayer = function(data){
-        if(self.currentPlayer.getID() == data.id){
-            !angular.isUndefined(data.active) ? self.currentPlayer.active = data.active : '';
-            !angular.isUndefined(data.ready) ? self.currentPlayer.ready = data.ready : '';
-            !angular.isUndefined(data.name) ? self.currentPlayer.name = data.name : '';
-            data.gameID && self.currentPlayer.setGameID(data.gameID);
-        }
-    };
-
     self.connect = function(){
         playerModel = sceneLoader.getSceneModels("player")[0];
         self.currentPlayer = null;
@@ -64,6 +55,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
         player.health = data.health;
         player.score = data.score;
         player.active = data.active;
+        player.inGame = data.inGame;
         player.ready = data.ready;
         player.ping = data.ping;
         player.setGameID(data.gameID);
@@ -77,6 +69,17 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
 
         if(data.inGame){
             player.model.visible = true;
+        }
+    };
+
+    self.updateUserPlayer = function(data){
+        if(self.currentPlayer.getID() == data.id){
+            !angular.isUndefined(data.active) ? self.currentPlayer.active = data.active : '';
+            !angular.isUndefined(data.ready) ? self.currentPlayer.ready = data.ready : '';
+            !angular.isUndefined(data.name) ? self.currentPlayer.name = data.name : '';
+            !angular.isUndefined(data.inGame) ? self.currentPlayer.inGame = data.inGame : '';
+            data.gameID && self.currentPlayer.setGameID(data.gameID);
+            $rootScope.$digest();
         }
     };
 
@@ -99,8 +102,12 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     function refreshPlayers(networkPlayers){
         var activePlayers = [];
         for(var id in networkPlayers){
-            addNetworkPlayer(networkPlayers[id]);
-            activePlayers.push(id);
+            if(id != self.currentPlayer.getID()){
+                addNetworkPlayer(networkPlayers[id]);
+                activePlayers.push(id);
+            } else {
+                self.updateUserPlayer(networkPlayers[id]);
+            }
         }
 
         for(var id in self.networkPlayers){

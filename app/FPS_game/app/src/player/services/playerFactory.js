@@ -112,13 +112,15 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			}
 
 			self.nozzleFlash.visible = self.shooting;
-			if(self.shooting){
-				self.nozzleFlash.rotation.set(-Math.PI/2,Math.random()*Math.PI*2,0);
-				self.lookAngles.x -= shootShatter.y/2;
-				self.lookAngles.y -= shootShatter.x/2;
-				shootShatter.x = shootShatter.x/2;
-				shootShatter.y = shootShatter.y/2;
-				self.shooting = false;
+			if(!self.networkPlayer) {
+				if (self.shooting) {
+					self.nozzleFlash.rotation.set(-Math.PI / 2, Math.random() * Math.PI * 2, 0);
+					self.lookAngles.x -= shootShatter.y / 2;
+					self.lookAngles.y -= shootShatter.x / 2;
+					shootShatter.x = shootShatter.x / 2;
+					shootShatter.y = shootShatter.y / 2;
+					self.shooting = false;
+				}
 			}
 		};
 
@@ -234,7 +236,6 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			self.renderer.addObject(self.model);
 			self.model.visible = true;
 			self.renderer.addFrameUpdatedObject(self);
-			self.inGame = true;
 		};
 
 		init();
