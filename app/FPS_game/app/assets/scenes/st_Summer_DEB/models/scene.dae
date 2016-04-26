@@ -397,7 +397,7 @@
       <init_from>./images/0_daylight_sky.jpg</init_from>
     </image>
     <image id="GRASS2_JPG">
-      <init_from>./images/1_GRASS2.JPG</init_from>
+      <init_from>./images/Grass.JPG</init_from>
     </image>
   </library_images>
   <library_visual_scenes>

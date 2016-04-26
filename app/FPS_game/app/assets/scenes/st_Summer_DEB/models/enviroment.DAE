@@ -2767,10 +2767,10 @@
       <init_from>./images/0_ground_asphalt_old_07.png</init_from>
     </image>
     <image id="Grass_jpg">
-      <init_from>./images/2_GRASS2.jpg</init_from>
+      <init_from>./images/Grass.jpg</init_from>
     </image>
     <image id="street_jpg">
-      <init_from>./images/interlocking.jpg</init_from>
+      <init_from>./images/street.jpg</init_from>
     </image>
     <image id="Concrete_Cast-In-Place_Formwork_Holes_jpg">
       <init_from>./images/3_Concrete.Cast-In-Place.Formwork.Holes.jpg</init_from>
