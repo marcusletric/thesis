@@ -1,15 +1,15 @@
 <div>
     <div class="container">
-        <h3>Current game {{game.running ? 'in progress' : game.queueing ? 'queueing' : 'ended' }}</h3>
-        <div>{{game.queueing ? 'This' : 'Next' }} match will start in {{(game.queueing ? game.queueTime - now : game.running ? (game.gameTime - now) : 10)/1000 | number : 0}} seconds.</div>
+        <h3>Current game {{game.running ? 'in progress' : game.queueing ? 'queueing' : 'ended, new game starting...' }}</h3>
+        <div ng-show="game.running || game.queueing">The game will {{game.queueing ? 'start' : 'end' }} in {{remainingTime}}.</div>
         <h4>Players in game:</h4>
-        <table class="">
+        <table>
             <tr>
                 <th>Name</th>
                 <th>HP</th>
                 <th>Score</th>
             </tr>
-            <tr ng-repeat="player in activePlayers orderBy:score">
+            <tr ng-repeat="player in activePlayers | orderBy:'-score'" ng-class="{'highlight':userPlayer.getID() == player.getID()}">
                 <td>{{player.name}}</td>
                 <td>{{player.health}}</td>
                 <td>{{player.score}}</td>
@@ -17,13 +17,13 @@
         </table>
         <hr>
         <h4>Players in queue:</h4>
-        <table class="">
+        <table>
             <tr>
                 <th>Name</th>
                 <th>ping</th>
                 <th>ready</th>
             </tr>
-            <tr ng-repeat="player in queue">
+            <tr ng-repeat="player in queue" ng-class="{'highlight':userPlayer.getID() == player.getID(), 'ready': player.ready}">
                 <td>{{player.name}}</td>
                 <td>{{player.ping}}</td>
                 <td>{{player.ready}}</td>
@@ -31,8 +31,8 @@
         </table>
 
         <div class="join-buttons">
-            <button ng-click="userPlayer.setReadyState(true)">Join match queue</button>
-            <button ng-click="userPlayer.setReadyState(false)">Leave match queue</button>
+            <button ng-disabled="userPlayer.inGame" ng-click="userPlayer.setReadyState(true)">Join match queue</button>
+            <button ng-disabled="userPlayer.inGame" ng-click="userPlayer.setReadyState(false)">Leave match queue</button>
         </div>
     </div>
 </div>

@@ -5,10 +5,10 @@ const WSPORT=9001;
 const WSHOST="localhost";
 
 var queueTimer;
-var queueTime=12000;
+var queueTime=60000;
 
 var gameTimer;
-var gameTime=30000;
+var gameTime=600000;
 
 var players = {};
 var playerIncrementID = 10;
@@ -106,7 +106,7 @@ function startQueue(){
 }
 
 function startGame(){
-    console.log('Starting game...');
+    console.log('Starting a new game...');
     activeGame.startGame((new Date()).getTime(),gameTime);
     gameTimer = setTimeout(endGame,gameTime);
 
@@ -124,6 +124,8 @@ function endGame(){
     console.log('Game ended');
     activeGame.endGame();
     setTimeout(startQueue,10000);
+
+    broadcast(self.getPlayers());
 
     broadcast({
         'listener': 'endGame',
@@ -210,13 +212,14 @@ this.reconnect = function(player,conn) {
         'listener': 'reconnect'
     };
 
-    if(activeGame && player.gameID == activeGame.id && playerIncrementID > player.id && players[player.id] && !connections[player.id]){
+    if(activeGame && player.gameID == activeGame.id && players[player.id] && !connections[player.id]){
         console.log('restoring connection');
         delete(connections[conn.clientID]);
         delete(players[conn.clientID]);
         conn.clientID = player.id;
         connections[player.id] = conn;
         players[player.id].active = true;
+        players[player.id].inGame = true;
         console.log('restoring player');
         responseObj.data = players[player.id];
         console.log('Connection sucessfully restored.');

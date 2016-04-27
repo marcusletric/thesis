@@ -63,8 +63,7 @@ angular.module('fps_game.rendering')
                 self.actualCamera = self.baseCamera;
                 self.addObject(self.baseCamera);
 
-                self.actualCamera.position.set(25,20,25);
-                self.actualCamera.rotation.set(-Math.sin(Math.PI/4)*Math.PI/3,Math.PI/4,Math.cos(Math.PI/4)*Math.PI/4);
+                self.resetCamera();
 
                 self.addObject(hemiLight);
                 self.addObject(dirLight);
@@ -72,7 +71,12 @@ angular.module('fps_game.rendering')
                 renderer.render(self.scene, self.actualCamera);
 
             }
-			
+
+            self.resetCamera = function(){
+                self.actualCamera.position.set(25,20,25);
+                self.actualCamera.rotation.set(-Math.sin(Math.PI/4)*Math.PI/3,Math.PI/4,Math.cos(Math.PI/4)*Math.PI/4);
+            };
+
 			self.addFrameUpdatedObject = function(object){
 				self.updateOnFrame.push(object);
 			};

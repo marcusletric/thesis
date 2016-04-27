@@ -4,6 +4,12 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
    var renderScope = null;
    var playerModel = null;
 
+
+   /**
+    * Játék vezérlésének inicializálása
+    *
+    * @param scope
+    */
    self.init = function(scope){
       renderScope = scope;
       // A forrasok gyokerkonyvtara
@@ -29,9 +35,11 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
    }
 
    self.startGame = function(game){
-      if(game.activePlayers.find(function(activePlayer){
-            return activePlayer.id == networkGameDriver.currentPlayer.getID();
-          })){
+      for(var id in networkGameDriver.networkPlayers){
+         networkGameDriver.networkPlayers[id].addPlayerModel();
+      }
+
+      if(networkGameDriver.currentPlayer.inGame){
          self.respawnPlayer(networkGameDriver.currentPlayer);
          networkGameDriver.currentPlayer.score=0;
       }
@@ -40,11 +48,10 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
 
    self.endGame = function(game){
       for(var id in networkGameDriver.networkPlayers){
-         networkGameDriver.networkPlayers[id].model.visible = false;
-         app.renderModel.removeFrameUpdatedObject(networkGameDriver.networkPlayers[id]);
+         networkGameDriver.networkPlayers[id].removePlayerModel();
       }
-      networkGameDriver.currentPlayer.model.visible = false;
-      app.renderModel.removeFrameUpdatedObject(networkGameDriver.currentPlayer);
+      renderScope.player.removePlayerModel();
+      app.renderModel.resetCamera();
    };
 
 
@@ -58,16 +65,15 @@ angular.module('fps_game.game').service('gameDriver', function ($q, resourceFetc
     * @returns {$q.promise}
     */
    function addUserPlayer(networkPlayer) {
-      renderScope.player = new Player(app.renderModel,playerModel);
+      renderScope.player = new Player(app.renderModel,playerModel.clone());
       renderScope.player.name = networkPlayer.name || gameConfigModel.playerName;
       renderScope.player.setID(networkPlayer.id);
 
       networkGameDriver.addCurrentPlayer(renderScope.player);
 
       if(networkPlayer.inGame){
-            renderScope.player.addPlayerModel();
-            app.renderModel.addFrameUpdatedObject(renderScope.player);
             networkGameDriver.updatePlayerAttrs(renderScope.player,networkPlayer);
+            renderScope.player.addPlayerModel();
       }
 
       webSocket.playerUpdate(networkGameDriver.currentPlayer.getNetworkPlayer());

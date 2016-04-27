@@ -6,6 +6,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		self.pingStart = new Date().getTime();
 
 		var movementSpeed = 3.2;
+		var mouseSensitivity = 0.55;
 		var modelLoaded = false;
 		var shootShatter = { x: 0, y: 0};
 
@@ -17,12 +18,13 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		self.ready = false;
 		self.active = true;
 		self.ping = 0;
+		self.onStage = false;
 
 		self.lookTarget = new THREE.Object3D();
 		self.movementVector = null;
 		self.initialRotation = {x: 0, y: 0, z: 0};
 		self.lookAngles = { x: 0, y: 0, z: 0};
-		self.movementFlags = { F: 0, B: 0, L: 0, R: 0};
+		self.movementFlags = { F: 0, B: 0, L: 0, R: 0, MV: 0, MH: 0};
 
 		self.inGame = false;
 		self.name = '';
@@ -87,6 +89,20 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 					}
 				}
 
+				if(self.movementFlags.MV){
+					if(self.lookAngles.x > -50 && self.lookAngles.x < 50){
+						self.lookAngles.x -= (self.movementFlags.MV / 180 * Math.PI) * mouseSensitivity;
+					} else {
+						self.lookAngles -= (Math.abs(self.lookAngles) / self.lookAngles * 2);
+					}
+					self.movementFlags.MV = 0;
+				}
+
+				if(self.movementFlags.MH){
+					self.lookAngles.y -= (self.movementFlags.MH / 180 * Math.PI) * mouseSensitivity;
+					self.movementFlags.MH = 0;
+				}
+
 				if (self.dead) {
 					self.model.rotation.set(Math.PI / 2, self.lookAngles.y, 0);
 				} else {
@@ -99,7 +115,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 				self.camera.position.set(self.model.position.x, self.model.position.y + self.boundBox.max.y, self.model.position.z);
 				self.lookTarget.position.set(
 					self.model.position.x + -(Math.sin(self.lookAngles.y)),
-					self.model.position.y + self.boundBox.max.y + (2 * Math.sin(self.lookAngles.x) ),
+					self.model.position.y + self.boundBox.max.y + (self.lookAngles.x ),
 					self.model.position.z + -(Math.cos(self.lookAngles.y))
 				);
 				self.camera.lookAt(self.lookTarget.position);
@@ -112,22 +128,20 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			}
 
 			self.nozzleFlash.visible = self.shooting;
-			if(!self.networkPlayer) {
-				if (self.shooting) {
-					self.nozzleFlash.rotation.set(-Math.PI / 2, Math.random() * Math.PI * 2, 0);
-					self.lookAngles.x -= shootShatter.y / 2;
-					self.lookAngles.y -= shootShatter.x / 2;
-					shootShatter.x = shootShatter.x / 2;
-					shootShatter.y = shootShatter.y / 2;
-					self.shooting = false;
-				}
+			if (self.shooting) {
+				self.nozzleFlash.rotation.set(-Math.PI / 2, Math.random() * Math.PI * 2, 0);
+				self.lookAngles.x -= shootShatter.y / 2;
+				self.lookAngles.y -= shootShatter.x / 2;
+				shootShatter.x = shootShatter.x / 2;
+				shootShatter.y = shootShatter.y / 2;
+				self.shooting = false;
 			}
 		};
 
-		self.updateLook = function(delta){
+		/*self.updateLook = function(delta){
 			self.lookAngles.x = (delta.y * (Math.PI / 2)) + shootShatter.x;
 			self.lookAngles.y = self.initialRotation.y + (delta.x * Math.PI) + shootShatter.y;
-		};
+		};*/
 
 		self.getNetworkPlayer = function(){
 			return {
@@ -233,9 +247,21 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		};
 
 		self.addPlayerModel = function(){
-			self.renderer.addObject(self.model);
-			self.model.visible = true;
-			self.renderer.addFrameUpdatedObject(self);
+			if(!self.onStage) {
+				self.renderer.addObject(self.model);
+				self.model.visible = true;
+				self.renderer.addFrameUpdatedObject(self);
+				self.onStage = true;
+			}
+		};
+
+		self.removePlayerModel = function(){
+			if(self.onStage){
+				self.renderer.removeObject(self.model);
+				self.model.visible = false;
+				self.renderer.removeFrameUpdatedObject(self);
+				self.onStage = false;
+			}
 		};
 
 		init();
@@ -310,7 +336,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 			var nearObjects = [];
 
 			self.renderer.scene.children.forEach(function(child){
-				if(self.model.position.distanceTo(child.position) <= child.nearRadius){
+				if(self.model != child && self.model.position.distanceTo(child.position) <= child.nearRadius){
 					nearObjects.push(child);
 				}
 			});

@@ -7,6 +7,7 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
     var initDeferred = $q.defer();
     var activeCookie = null;
     var alive = false;
+    var reconnecting = false;
 
     listeners.setClientID = [function (newID){
         activeCookie = $cookies.getObject('Player');
@@ -43,6 +44,7 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
     }];
 
     this.connect = function(){
+
         gameServer =  new WebSocket(gameConfigModel.serverAddr);
 
         gameServer.onopen = function (event) {
@@ -52,6 +54,7 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
             ];
             console.log('Connecting to game server on: ' + gameConfigModel.serverAddr );
             sendCommand('getNewId',arguments);
+            reconnecting = false;
         };
 
         gameServer.onmessage = function (event) {
@@ -63,6 +66,10 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
 
         gameServer.onclose = function(event){
             alive = false;
+        };
+
+        gameServer.onerror = function(event){
+            reconnecting = false;
         };
 
         return initDeferred.promise;
@@ -139,10 +146,20 @@ angular.module('fps_game.network').service('webSocket', function($q,gameConfigMo
         listeners[listenName].push(listener);
     };
 
+    this.removeListener = function(listenName,listener){
+        if(listeners[listenName] && listeners[listenName].indexOf(listener) > -1){
+            delete(listeners[listenName][listeners[listenName].indexOf(listener)]);
+        }
+    };
+
     function sendCommand(command,arguments) {
         if(!alive){
-            console.log('Connection lost, trying to reconnect');
-            self.reconnect();
+            if(!reconnecting){
+                reconnecting = true;
+                self.connect().then(function(){
+                    self.reconnect();
+                });
+            }
             return false;
         }
         // Construct a msg object containing the data the server needs to process the message from the chat client.

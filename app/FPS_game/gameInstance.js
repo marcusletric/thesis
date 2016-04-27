@@ -21,6 +21,10 @@ var GameInstance = function(gameID,playerPool){
 
     self.endGame = function(){
         self.running = false;
+        self.activePlayers.forEach(function(player){
+            playerPool[player.id].dead = true;
+            playerPool[player.id].ready = false;
+        });
     };
 
     self.inQueue = function(player){
@@ -30,9 +34,9 @@ var GameInstance = function(gameID,playerPool){
     };
 
     self.startQueueing = function(timestamp,queueTime){
-        self.activePlayers.forEach(function(player){
-            playerPool[player.id].inGame = false;
-        });
+        for(var id in playerPool){
+            playerPool[id].inGame = false;
+        }
         self.activePlayers = [];
         self.playerQueue = [];
         self.queueing = timestamp;

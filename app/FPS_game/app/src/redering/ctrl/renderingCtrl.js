@@ -3,7 +3,7 @@ angular.module('fps_game.rendering').controller('RenderingController', function 
     var elem = $($element);
     var config = {
         'camera':{
-            'fov':60,
+            'fov':75,
             'aspect':elem.width()/elem.height(),
             'near':0.01,
             'far':1000

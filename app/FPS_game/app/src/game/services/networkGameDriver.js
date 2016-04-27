@@ -77,6 +77,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
             !angular.isUndefined(data.active) ? self.currentPlayer.active = data.active : '';
             !angular.isUndefined(data.ready) ? self.currentPlayer.ready = data.ready : '';
             !angular.isUndefined(data.name) ? self.currentPlayer.name = data.name : '';
+            !angular.isUndefined(data.dead) ? self.currentPlayer.dead = data.dead : '';
             !angular.isUndefined(data.inGame) ? self.currentPlayer.inGame = data.inGame : '';
             data.gameID && self.currentPlayer.setGameID(data.gameID);
             $rootScope.$digest();
@@ -112,7 +113,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
 
         for(var id in self.networkPlayers){
             if(activePlayers.indexOf(id) < 0 ){
-                app.renderModel.removeObject(self.networkPlayers[id].model);
+                self.networkPlayers[id].removePlayerModel();
                 delete (self.networkPlayers[id]);
             }
         }
@@ -126,7 +127,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
     function addNetworkPlayer(player){
         if(player.id != self.clientID) {
             if(!self.networkPlayers[player.id]){
-                var newPlayer = new Player(app.renderModel,playerModel);
+                var newPlayer = new Player(app.renderModel,playerModel.clone());
                 newPlayer.networkPlayer = true;
                 newPlayer.setID(player.id);
                 newPlayer.addPlayerModel();
@@ -159,6 +160,7 @@ angular.module('fps_game.game').service('networkGameDriver', function ($rootScop
 
     function updateGame (game){
         self.networkGame = game;
+        $rootScope.$digest();
     }
 
 });
