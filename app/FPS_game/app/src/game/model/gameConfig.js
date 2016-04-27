@@ -9,6 +9,7 @@ angular.module('fps_game.game').service('gameConfigModel', function ($cookies) {
     this.shadows = false;
     this.playerName = '';
     this.serverAddr = 'ws://localhost:9001';
+    this.mouseSensitivity = '0.35';
 
     if(cookieData){
         for(key in cookieData){

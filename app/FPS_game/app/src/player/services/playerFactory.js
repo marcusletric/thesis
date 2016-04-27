@@ -1,4 +1,4 @@
-angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,$q,webSocket){
+angular.module('fps_game.player').factory('Player', function ($timeout,$rootScope,$q,webSocket,gameConfigModel){
 	return function (renderer,model) {
 		var self = this;
 		var playerID = null;
@@ -6,7 +6,7 @@ angular.module('fps_game.player').factory('Player', function ($timeout,$rootScop
 		self.pingStart = new Date().getTime();
 
 		var movementSpeed = 3.2;
-		var mouseSensitivity = 0.55;
+		var mouseSensitivity = gameConfigModel.mouseSensitivity || 0.55;
 		var modelLoaded = false;
 		var shootShatter = { x: 0, y: 0};
 

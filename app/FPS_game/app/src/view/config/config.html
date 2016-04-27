@@ -2,6 +2,17 @@
     <h1>Beállítások</h1><br>
     Játékos neve: <input type="text" ng-model="playerName"/><br>
     Játékszerver címe: <input type="text" ng-model="serverAddr"/><br>
+    Egér érzékenysége: <select ng-model="mouseSensitivity">
+        <option value="0.75">9</option>
+        <option value="0.7">8</option>
+        <option value="0.65">7</option>
+        <option value="0.6">6</option>
+        <option value="0.55">5</option>
+        <option value="0.5">4</option>
+        <option value="0.45">3</option>
+        <option value="0.4">2</option>
+        <option value="0.35">1</option>
+    <select>
     <br>
     Felbontás: <select ng-model="resolution">
         <option value="low">Alacsony</option>
@@ -13,12 +24,12 @@
     <button ng-click="startGame()">Start</button>
     <br>
     <div>
-        A játék vezérlése:<br>
+        A játékos vezérlése:<br>
         [W] : előre<br>
         [S] : hátra<br>
         [A] : oldalazás balra<br>
         [D] : oldalazás jobbra<br>
         [Bal egér klikk] : lövés<br>
+        [Tab] : Játékállás megtekintése
     </div>
-
 </div>

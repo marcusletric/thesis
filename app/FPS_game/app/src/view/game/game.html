@@ -2,6 +2,7 @@
 	<div mouse-control keyboard-control class="hud">
 		<div ng-if="!loading" class="health"><span>+</span>{{player.health}}</div>
 		<div ng-if="!loading" class="score">Score: {{player.score}}</div>
+		<div ng-if="!pointerLock && player.inGame && !player.dead && !respawning" class="respawn-msg">Click on screen!</div>
 		<div ng-if="!loading && player.inGame &&  player.dead && !respawning && canRespawn" class="respawn-msg">Click to respawn</div>
 		<div ng-if="!loading && player.inGame && respawning" class="respawn-msg">Respawning</div>
 		<div ng-if="!loading" ng-class="{'active': player.headShot}" class="headshot-msg">HEAD SHOT!</div>

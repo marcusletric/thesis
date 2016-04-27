@@ -10,11 +10,15 @@ angular.module('fps_game.game').directive('gameConfig', function ($state,$window
              scope.playerName      =    gameConfigModel.playerName;
              scope.resolution =   gameConfigModel.resolution;
              scope.serverAddr =   gameConfigModel.serverAddr;
+             scope.mouseSensitivity =   gameConfigModel.mouseSensitivity.toString();
 
             scope.startGame = function(){
                 $state.go('game');
             };
 
+            scope.$watch("mouseSensitivity",function(value){
+                updateConfig("mouseSensitivity",value);
+            });
             scope.$watch("shadows",function(value){
                 updateConfig("shadows",value);
             });
