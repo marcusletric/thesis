@@ -8,4 +8,4 @@ The web application based on AngularJS and NodeJS and is made for demonstration 
 ## Installation / Telepítés
 1. Download and setup node package manager https://nodejs.org
 2. npm install
-3. npm run
+3. npm run start
